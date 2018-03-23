@@ -9,7 +9,7 @@ const config = require('./config/database');
 
 var app = express();
 
-const route = require('./routes/route');
+//const route = require('./routes/route');
 const users = require('./routes/users');
 
 //connect to mongoDB
@@ -42,16 +42,22 @@ require('./config/passport')(passport);
 //static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/api', route);
+//app.use('/api', route);
 app.use('/user', users);
 
 //port number
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-app.get('/', (req, res)=>{
-    res.send('foobar');
+// Index Route
+app.get('/', (req, res) => {
+    res.send('Invalid Endpoint!');
 });
 
-app.listen(port, ()=>{
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/index.html'));
+});
+
+// Start the server
+app.listen(port, () => {
     console.log("Server started at port: " + port);
 });
