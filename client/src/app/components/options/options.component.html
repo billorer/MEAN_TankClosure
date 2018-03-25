@@ -1,0 +1,29 @@
+<h2 class="page-header">Options</h2>
+<h5 class="page-header">Movement keys</h5>
+<form (submit)="onOptionSubmit()">
+    <div class="form-group">
+        <label>Forward</label>
+        <input type="text" [(ngModel)]="option.forwardKey" name="forward" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label>Backward</label>
+        <input type="text" [(ngModel)]="option.backwardKey" name="backwardKey" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label>Left</label>
+        <input type="text" [(ngModel)]="option.leftKey" name="leftKey" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label>Right</label>
+        <input type="text" [(ngModel)]="option.rightKey" name="rightKey" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label>Attack</label>
+        <input type="text" [(ngModel)]="option.attackKey" name="attackKey" class="form-control" required>
+    </div>
+    <input type="submit" class="btn btn-primary" value="Save">
+</form>
+<ul class="list-group">
+    <button type="button" (click)="onBackClick()" class="list-group-item list-group-item-action">Back</button>
+</ul>
+<!-- //TODO VALIDATION -->

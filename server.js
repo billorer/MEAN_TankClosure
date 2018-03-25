@@ -11,6 +11,7 @@ var app = express();
 
 //const route = require('./routes/route');
 const users = require('./routes/users');
+const options = require('./routes/options');
 
 //connect to mongoDB
 mongoose.connect(config.database);
@@ -44,6 +45,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //app.use('/api', route);
 app.use('/user', users);
+app.use('/option', options);
 
 //port number
 const port = process.env.PORT || 3000;

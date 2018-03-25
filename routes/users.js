@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/database');
 
 const User = require('../models/user');
+const Option = require('../models/option');
 
 // Register
 router.post('/register', (req, res, next) => {
@@ -16,12 +17,28 @@ router.post('/register', (req, res, next) => {
         password: req.body.password
     });
 
-    User.addUser(newUser, (err, user) => {
-        if(err){
-            res.json({success: false, msg: 'Failed to register user: '+err});
-        }else {
-            res.json({success: true, msg: 'User registered successfully!'});
+    // We check if the username alreay exists
+    User.getUserByUsername(newUser.username, (err, user) => {
+        if(err) throw err;
+        if(user){
+            return res.json({success: false, msg: 'Username already exists!'});
         }
+
+        // The username does not exist, so we can create the new entity
+        User.addUser(newUser, (err, user) => {
+            if(err){
+                res.json({success: false, msg: 'Failed to register user: '+err});
+            }else {
+                // Adding default options to the new user as well
+                Option.addOption(user._id, (err, options) => {
+                    if(err){
+                        res.json({success: false, msg: 'Failed to save options to the new user: '+err});
+                    }else {
+                        res.json({success: true, msg: 'User registered successfully!'});
+                    }
+                });
+            }
+        });
     });
 });
 

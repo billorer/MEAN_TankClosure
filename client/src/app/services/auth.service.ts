@@ -22,6 +22,20 @@ export class AuthService {
       return this.http.post('http://localhost:3000/user/authenticate', user, {headers:headers}).map(res => res.json());
   }
 
+  saveOptions(option){
+      let headers = new Headers();
+      headers.append('Content-Type','application/json');
+      return this.http.put('http://localhost:3000/option/saveOptions', option, {headers:headers}).map(res => res.json());
+  }
+
+  getOption(userId){
+      let headers = new Headers();
+      this.loadToken();
+      headers.append('Authorization', this.authToken);
+      headers.append('Content-Type','application/json');
+      return this.http.get('http://localhost:3000/option/getOption/'+userId, {headers:headers}).map(res => res.json());
+  }
+
   getProfile(){
       let headers = new Headers();
       this.loadToken();
@@ -42,8 +56,11 @@ export class AuthService {
       this.user = user;
   }
 
+  getUserIdFromLStorage(){
+      return JSON.parse(localStorage.getItem('user')).id;
+  }
+
   loggedIn(){
-      //console.log("Token: "+!tokenNotExpired());
       return tokenNotExpired('id_token');
   }
 
