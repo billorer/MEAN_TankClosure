@@ -4,6 +4,9 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('../config/database');
 
+//EMAIL
+const emails = require('../config/email');
+
 const User = require('../models/user');
 const Option = require('../models/option');
 
@@ -34,7 +37,9 @@ router.post('/register', (req, res, next) => {
                     if(err){
                         res.json({success: false, msg: 'Failed to save options to the new user: '+err});
                     }else {
-                        res.json({success: true, msg: 'User registered successfully!'});
+                        // Sending emeail to the newly registered user
+                        emails.sendEmail(newUser);
+                        res.json({success: true, msg: 'User registered successfully and the registration email has been sent!'});
                     }
                 });
             }

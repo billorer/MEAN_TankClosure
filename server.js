@@ -6,8 +6,10 @@ const cors = require('cors');
 const passport = require('passport');
 const path = require('path');
 const config = require('./config/database');
+const http = require('http');
 
 var app = express();
+var server = http.createServer(app);
 
 //const route = require('./routes/route');
 const users = require('./routes/users');
@@ -55,11 +57,16 @@ app.get('/', (req, res) => {
     res.send('Invalid Endpoint!');
 });
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
-});
+// app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'public/index.html'));
+// });
 
 // Start the server
-app.listen(port, () => {
+server.listen(port, () => {
     console.log("Server started at port: " + port);
 });
+
+// Create socketIO object
+const io = require('socket.io')(server);
+module.exports = io;
+const socket = require('./socketio/lobbyIO');

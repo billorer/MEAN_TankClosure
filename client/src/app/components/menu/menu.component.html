@@ -1,0 +1,79 @@
+<div class="jumbotron text-center">
+    <h1>Tank Closure</h1>
+    <p class="lead">Menu</p>
+</div>
+<div class="container">
+    <!-- <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">HostId</th>
+          <th scope="col">GameName</th>
+          <th scope="col">Players</th>
+          <th scope="col">GameMap</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="lobby in lobbies">
+          <th scope="row">{{$index}}</th>
+          <td>{{lobby.hostId}}</td>
+          <td>{{lobby.gameName}}</td>
+          <td>{{lobby.players}}</td>
+          <td>{{lobby.gameMap}}</td>
+          <td>
+              <button type="button" (click)="onJoinLobbyClick()" class="btn btn-success">Join</button>
+          </td>
+        </tr>
+      </tbody>
+    </table> -->
+</div>
+<ul class="list-group">
+    <button type="button" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#lobbyCreateModal">Create lobby</button>
+    <button type="button" (click)="onBackClick()" class="list-group-item list-group-item-action">Back</button>
+</ul>
+<!-- Modal -->
+<div class="modal fade" id="lobbyCreateModal" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Create Lobby</h4>
+        </div>
+        <div class="modal-body">
+            <form (submit)="onLobbySubmit()">
+                <div class="form-group">
+                    <label>Lobby Name</label>
+                    <input type="text" [(ngModel)]="lobbyName" name="lobbyName" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Lobby Password</label>
+                    <input type="password" [(ngModel)]="lobbyPassword" name="lobbyPassword" placeholder="Optional" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Max player number</label>
+                    <select class="form-control" [(ngModel)]="lobbyMaxPlayer" name="lobbyMaxPlayer">
+                      <option>2</option>
+                      <option>4</option>
+                      <option>6</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Map</label>
+                    <select class="form-control" [(ngModel)]="lobbyMap" name="lobbyMap">
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                    </select>
+                </div>
+                <input type="submit" class="btn btn-primary" value="Create">
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+</div>

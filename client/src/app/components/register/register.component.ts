@@ -57,4 +57,8 @@ export class RegisterComponent implements OnInit {
             }
         });
     }
+
+    onBackClick(){
+        this.router.navigate(['/']);
+    }
 }

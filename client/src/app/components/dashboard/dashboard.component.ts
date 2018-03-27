@@ -13,6 +13,10 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
   }
 
+  onPlayClick() {
+      this.router.navigate(['/menu']);
+  }
+
   onOptionsClick(){
       //this.flashMessage.show('Something went wrong!', {cssClass: 'alert-danger', timeout: 3000});
       this.router.navigate(['/options']);

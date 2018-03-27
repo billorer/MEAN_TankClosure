@@ -34,6 +34,9 @@ export class OptionsComponent implements OnInit {
   onOptionSubmit(){
       const lOption = this.option;
 
+      console.log("Option: " + lOption);
+      console.log("Option: " + lOption.forwardKey);
+
       //Save option
       this.authService.saveOptions(lOption).subscribe(data => {
           if(data.success){

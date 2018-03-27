@@ -11,12 +11,16 @@ import { RegisterComponent } from './components/register/register.component';
 import { HomeComponent } from './components/home/home.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { OptionsComponent } from './components/options/options.component';
+import { LobbyComponent } from './components/lobby/lobby.component';
+import { MenuComponent } from './components/menu/menu.component';
 
 import { ValidateService } from './services/validate.service';
 import { AuthService } from './services/auth.service';
+import { SocketioService } from './services/socketio.service';
 import { FlashMessagesModule } from 'angular2-flash-messages';
 import { AuthGuard } from './guards/auth.guard';
-import { OptionsComponent } from './components/options/options.component';
+
 
 const appRoutes: Routes = [
     {path:'', component: HomeComponent},
@@ -25,7 +29,8 @@ const appRoutes: Routes = [
     {path:'dashboard', component: DashboardComponent, canActivate:[AuthGuard]},
     {path:'profile', component: ProfileComponent, canActivate:[AuthGuard]},
     {path:'options', component: OptionsComponent, canActivate:[AuthGuard]},
-    {path:'menu', component: OptionsComponent, canActivate:[AuthGuard]}
+    {path:'menu', component: MenuComponent, canActivate:[AuthGuard]},
+    {path:'lobby', component: LobbyComponent, canActivate:[AuthGuard]},
 ];
 
 @NgModule({
@@ -37,7 +42,9 @@ const appRoutes: Routes = [
     HomeComponent,
     DashboardComponent,
     ProfileComponent,
-    OptionsComponent
+    OptionsComponent,
+    LobbyComponent,
+    MenuComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +53,7 @@ const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes),
     FlashMessagesModule.forRoot()
   ],
-  providers: [ValidateService, AuthService, AuthGuard],
+  providers: [ValidateService, AuthService, AuthGuard, SocketioService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
