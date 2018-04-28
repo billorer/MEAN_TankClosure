@@ -12,7 +12,6 @@ import { HomeComponent } from './components/home/home.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { OptionsComponent } from './components/options/options.component';
-import { LobbyComponent } from './components/lobby/lobby.component';
 import { MenuComponent } from './components/menu/menu.component';
 
 import { ValidateService } from './services/validate.service';
@@ -30,7 +29,6 @@ const appRoutes: Routes = [
     {path:'profile', component: ProfileComponent, canActivate:[AuthGuard]},
     {path:'options', component: OptionsComponent, canActivate:[AuthGuard]},
     {path:'menu', component: MenuComponent, canActivate:[AuthGuard]},
-    {path:'lobby', component: LobbyComponent, canActivate:[AuthGuard]},
 ];
 
 @NgModule({
@@ -43,7 +41,6 @@ const appRoutes: Routes = [
     DashboardComponent,
     ProfileComponent,
     OptionsComponent,
-    LobbyComponent,
     MenuComponent
   ],
   imports: [

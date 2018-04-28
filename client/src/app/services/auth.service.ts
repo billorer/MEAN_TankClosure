@@ -61,6 +61,10 @@ export class AuthService {
       return JSON.parse(localStorage.getItem('user')).id;
   }
 
+  getUserNameFromLStorage(){
+      return JSON.parse(localStorage.getItem('user')).username;
+  }
+
   loggedIn(){
       return tokenNotExpired('id_token');
   }

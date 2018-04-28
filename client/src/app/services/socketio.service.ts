@@ -14,36 +14,25 @@ export class SocketioService {
         this.socket = socketIo(environment.api_url);
     }
 
-    getSocketObject(){
-        return this.socket;
+    on(eventName:any, callback:any){
+        this.socket && this.socket.on(eventName, (data) => {
+            callback(data);
+        });
     }
 
-    // connect (): Rx.Subject<MessageEvent> {
-    //     this.socket = socketIo(environment.api_url);
-    //
-    //     // We define our observable which will observe any incoming messages
-    //     // from our socket.io server.
-    //     let observable = new Observable(observer => {
-    //         this.socket.on('message', (data) => {
-    //           console.log("Received message from Websocket Server")
-    //           observer.next(data);
-    //         })
-    //         return () => {
-    //           this.socket.disconnect();
-    //         }
-    //     });
-    //
-    //     // We define our Observer which will listen to messages
-    //     // from our other components and send messages back to our
-    //     // socket server whenever the `next()` method is called.
-    //     let observer = {
-    //         next: (data: Object) => {
-    //             this.socket.emit('message', JSON.stringify(data));
-    //         },
-    //     };
-    //
-    //     // we return our Rx.Subject which is a combination
-    //     // of both an observer and observable.
-    //     return Rx.Subject.create(observer, observable);
-    // }
+    emit(eventName:any, data:any){
+        this.socket && this.socket.emit(eventName, data);
+    }
+
+    removeEventListener(eventName: any){
+        this.socket && this.socket.removeEventListener(eventName);
+    }
+
+    getId() {
+        return this.socket.id;
+    }
+
+    getNsps() {
+        return this.socket.nsp;
+    }
 }

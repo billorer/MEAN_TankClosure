@@ -67,6 +67,6 @@ server.listen(port, () => {
 });
 
 // Create socketIO object
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {wsEngine: 'ws'});
 module.exports = io;
 const socket = require('./socketio/lobbyIO');

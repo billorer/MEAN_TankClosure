@@ -2,36 +2,65 @@
     <h1>Tank Closure</h1>
     <p class="lead">Menu</p>
 </div>
-<div class="container">
-    <!-- <table class="table table-hover">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">HostId</th>
-          <th scope="col">GameName</th>
-          <th scope="col">Players</th>
-          <th scope="col">GameMap</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="lobby in lobbies">
-          <th scope="row">{{$index}}</th>
-          <td>{{lobby.hostId}}</td>
-          <td>{{lobby.gameName}}</td>
-          <td>{{lobby.players}}</td>
-          <td>{{lobby.gameMap}}</td>
-          <td>
-              <button type="button" (click)="onJoinLobbyClick()" class="btn btn-success">Join</button>
-          </td>
-        </tr>
-      </tbody>
-    </table> -->
+<div *ngIf="lobbyList" id="lobbyList">
+    <div class="container">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">HostId</th>
+              <th scope="col">GameName</th>
+              <th scope="col">Players</th>
+              <th scope="col">GameMap</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let lobby of lobbies">
+              <th scope="row">{{$index}}</th>
+              <td>{{lobby.lobbyHostId}}</td>
+              <td>{{lobby.lobbyName}}</td>
+              <td>{{lobby.lobbyCurMaxPlayers}}</td>
+              <td>{{lobby.lobbyMap}}</td>
+              <td>
+                  <button type="button" (click)="onJoinLobbyClick(lobby.lobbyHostId)" class="btn btn-success">Join</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+    <ul class="list-group">
+        <button type="button" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#lobbyCreateModal">Create lobby</button>
+        <button type="button" (click)="onBackClick()" class="list-group-item list-group-item-action">Back</button>
+    </ul>
 </div>
-<ul class="list-group">
-    <button type="button" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#lobbyCreateModal">Create lobby</button>
-    <button type="button" (click)="onBackClick()" class="list-group-item list-group-item-action">Back</button>
-</ul>
+<div *ngIf="!lobbyList" id="currentLobby">
+    <div class="container">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">PlayerName</th>
+              <th scope="col">PlayerStatus</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let curPlayer of players">
+              <th scope="row">{{$index}}</th>
+              <td>{{curPlayer.playerName}}</td>
+              <td>{{curPlayer.playerStatus}}</td>
+              <td>
+                  <button *ngIf="player.playerId==curPlayer.playerId" type="button" (click)="onPlayerReadyClick(curPlayer.playerId, curPlayer.playerLobbyHostId, curPlayer.playerStatus)" class="btn btn-success">{{curPlayer.playerStatus ? "Unready" : "Ready"}}</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+    <ul class="list-group">
+        <button *ngIf="player.playerId==player.playerLobbyHostId" type="button" (click)="startMatch()" class="list-group-item list-group-item-action" >Start match</button>
+        <button type="button" (click)="onLeaveClick(player.playerId, player.playerLobbyHostId)" class="list-group-item list-group-item-action">Leave</button>
+    </ul>
+</div>
 <!-- Modal -->
 <div class="modal fade" id="lobbyCreateModal" role="dialog">
     <div class="modal-dialog">
@@ -42,18 +71,18 @@
           <h4 class="modal-title">Create Lobby</h4>
         </div>
         <div class="modal-body">
-            <form (submit)="onLobbySubmit()">
+            <form (submit)="onLobbySubmit();">
                 <div class="form-group">
                     <label>Lobby Name</label>
-                    <input type="text" [(ngModel)]="lobbyName" name="lobbyName" class="form-control">
+                    <input type="text" [(ngModel)]="lobby.lobbyName" name="lobbyName" class="form-control">
                 </div>
                 <div class="form-group">
                     <label>Lobby Password</label>
-                    <input type="password" [(ngModel)]="lobbyPassword" name="lobbyPassword" placeholder="Optional" class="form-control">
+                    <input type="password" [(ngModel)]="lobby.lobbyPassword" name="lobbyPassword" placeholder="Optional" class="form-control">
                 </div>
                 <div class="form-group">
                     <label>Max player number</label>
-                    <select class="form-control" [(ngModel)]="lobbyMaxPlayer" name="lobbyMaxPlayer">
+                    <select class="form-control" [(ngModel)]="lobby.lobbyMaxPlayer" name="lobbyMaxPlayer">
                       <option>2</option>
                       <option>4</option>
                       <option>6</option>
@@ -61,7 +90,7 @@
                 </div>
                 <div class="form-group">
                     <label>Map</label>
-                    <select class="form-control" [(ngModel)]="lobbyMap" name="lobbyMap">
+                    <select class="form-control" [(ngModel)]="lobby.lobbyMap" name="lobbyMap">
                       <option>1</option>
                       <option>2</option>
                       <option>3</option>
@@ -71,9 +100,8 @@
             </form>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" id="closeButton" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
       </div>
-
     </div>
 </div>
