@@ -30,6 +30,31 @@ const OptionSchema = mongoose.Schema({
         type: String,
         required: true,
         default: 'k'
+    },
+    forwardCode:{
+        type: Number,
+        required: true,
+        default: '87'
+    },
+    backwardCode:{
+        type: Number,
+        required: true,
+        default: '83'
+    },
+    leftCode: {
+        type: Number,
+        required: true,
+        default: '65'
+    },
+    rightCode: {
+        type: Number,
+        required: true,
+        default: '68'
+    },
+    attackCode: {
+        type: Number,
+        required: true,
+        default: '120'
     }
 });
 
@@ -56,6 +81,11 @@ module.exports.updateOption = function(newOption, callback){
       option.leftKey = newOption.leftKey;
       option.rightKey = newOption.rightKey;
       option.attackKey = newOption.attackKey;
+      option.forwardCode = newOption.forwardCode;
+      option.backwardCode = newOption.backwardCode;
+      option.leftCode = newOption.leftCode;
+      option.rightCode = newOption.rightCode;
+      option.attackCode = newOption.attackCode;
       option.save(callback);
     });
 };

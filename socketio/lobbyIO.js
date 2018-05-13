@@ -5,6 +5,9 @@ const Player = require('../models/player');
 var lobbies = {};
 var socketHashMapList = {};
 
+module.exports = lobbies;
+module.exports = socketHashMapList;
+
 io.on('connection', (socket) => {
     console.log("A new socket connected: " + socket.id);
     socketHashMapList[socket.id] = socket;
@@ -67,7 +70,7 @@ io.on('connection', (socket) => {
         console.log("Player: " + playerId + " left lobby: " + hostId);
 
         if(playerId === hostId){
-            console.log("Deleting lobby: " + pHostId);
+            console.log("Deleting lobby: " + hostId);
             deleteLobby(hostId);
         }else{
             deleteLobbyPlayer(hostId, playerId);
@@ -76,7 +79,14 @@ io.on('connection', (socket) => {
         io.emit('updateLobbiesList', {lobbies: lobbies});
     });
 
-    socket.on('disconnect', function () {
+    socket.on('changeLobbyStatus', (data) => {
+        if(lobbies.hasOwnProperty(data.lobbyHostId)){
+            lobbies[data.lobbyHostId].lobbyInGame = true;
+        }
+        io.emit('updateLobbiesList', {lobbies: lobbies});
+    });
+
+    socket.on('disconnect', () => {
         //delete the lobbies of the socket if there is any
         if(lobbies.hasOwnProperty(socket.id)) {
             deleteLobby(socket.id);
@@ -84,7 +94,8 @@ io.on('connection', (socket) => {
         else {
             //iterate through the lobbies, and delete a player from a lobby
             for(let lobby in lobbies){
-                deleteLobbyPlayer(lobby, hostId);
+                deleteLobbyPlayer(lobby, socket.id);
+                sendPlayersListToClients(lobby);
             }
         }
         //remove the socket from the socketList

@@ -8,6 +8,7 @@ import { environment } from '../../environments/environment';
 export class AuthService {
     authToken: any;
     user: any;
+    options: any;
 
   constructor(private http: Http) { }
 
@@ -50,6 +51,11 @@ export class AuthService {
       this.authToken = token;
   }
 
+  storeOptionsData(options){
+      localStorage.setItem('option', JSON.stringify(options));
+      this.options = options;
+  }
+
   storeUserData(token, user){
       localStorage.setItem('id_token', token);
       localStorage.setItem('user', JSON.stringify(user)); //localStorage cannot store objects
@@ -63,6 +69,10 @@ export class AuthService {
 
   getUserNameFromLStorage(){
       return JSON.parse(localStorage.getItem('user')).username;
+  }
+
+  getOptionsFromLStorage(){
+      return JSON.parse(localStorage.getItem('option'));
   }
 
   loggedIn(){

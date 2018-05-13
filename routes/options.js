@@ -14,14 +14,21 @@ router.put('/saveOptions', (req, res, next) => {
         leftKey: req.body.leftKey,
         rightKey: req.body.rightKey,
         attackKey: req.body.attackKey,
+        forwardCode: req.body.forwardCode,
+        backwardCode: req.body.backwardCode,
+        leftCode: req.body.leftCode,
+        rightCode: req.body.rightCode,
+        attackCode: req.body.attackCode,
         userId: req.body.userId
     });
-
+    console.log("NewOption: " + newOption);
     Option.updateOption(newOption, (err, options) => {
         if(err){
+
             res.json({success: false, msg: 'Failed to save options: '+err});
         }else {
-            res.json({success: true, msg: 'Options saved successfully!'});
+            console.log("Options: "+options);
+            res.json({success: true, options: options, msg: 'Options saved successfully!'});
         }
     });
 });
@@ -43,6 +50,11 @@ router.get('/getOption/:userId', passport.authenticate('jwt', {session:false}), 
                 leftKey: option.leftKey,
                 rightKey: option.rightKey,
                 attackKey:option.attackKey,
+                forwardCode: option.forwardCode,
+                backwardCode: option.backwardCode,
+                leftCode: option.leftCode,
+                rightCode: option.rightCode,
+                attackCode:option.attackCode,
                 userId: option.userId
             }
         });

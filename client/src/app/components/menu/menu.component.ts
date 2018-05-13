@@ -27,7 +27,7 @@ export class MenuComponent implements OnInit {
     ) { }
 
     initializeLocalVariables(){
-        this.lobby = new Lobby("","",null,null,"-",null);
+        this.lobby = new Lobby("","",null,null,"-",null,null);
         this.lobbies = new Array();
 
         this.player = new Player("","","",null);
@@ -69,9 +69,11 @@ export class MenuComponent implements OnInit {
     updateLobbiesList(lobbiesList){
         this.lobbies = [];
         for (let lobby in lobbiesList){
-            if(lobbiesList.hasOwnProperty(lobby)){
+            if(lobbiesList.hasOwnProperty(lobby) && !lobbiesList[lobby].lobbyInGame){
                 this.lobbies.push(lobbiesList[lobby]);
                 console.log("LobbyId: "+lobbiesList[lobby].lobbyHostId + " CurPlayers: " + lobbiesList[lobby].lobbyCurPlayer);
+            } else{
+                console.log("InGameLobby: "+lobbiesList[lobby].lobbyHostId + " CurPlayers: " + lobbiesList[lobby].lobbyCurPlayer);
             }
         }
     }
@@ -128,6 +130,10 @@ export class MenuComponent implements OnInit {
                 }
             }
         }
+        this.socketioService.emit('changeLobbyStatus', {lobbyHostId: this.lobby.lobbyHostId});
+
+        console.log("Lobby: " + this.lobby.lobbyName + " " +  this.lobby.lobbyInGame);
+        this.router.navigate(['/game']);
         console.log("The match has been started!");
     }
 

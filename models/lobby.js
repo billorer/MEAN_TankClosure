@@ -10,6 +10,7 @@ function Lobby(lobbyHostId, lobbyName, lobbyPassword, lobbyMap,
         this.lobbyCurPlayer = 0;
         this.curMaxPlayer();
         this.lobbyPlayers = {};
+        this.lobbyInGame = false;
 }
 
 Lobby.prototype.curMaxPlayer = function() {

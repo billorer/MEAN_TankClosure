@@ -33,13 +33,10 @@ export class OptionsComponent implements OnInit {
 
   onOptionSubmit(){
       const lOption = this.option;
-
-      console.log("Option: " + lOption);
-      console.log("Option: " + lOption.forwardKey);
-
       //Save option
       this.authService.saveOptions(lOption).subscribe(data => {
           if(data.success){
+              this.authService.storeOptionsData(data.options);
               this.flashMessage.show('Saved successfully!', {cssClass: 'alert-success', timeout: 3000});
               this.router.navigate(['/dashboard']);
           } else {
@@ -49,8 +46,14 @@ export class OptionsComponent implements OnInit {
       });
   }
 
+  getKeyCode(event, inputID){
+      let keyCodeNR = event.which || event.keyCode;
+      //We convert the keyCode from lower to Upper case, thats why we use minus 32
+      this.option[inputID] = keyCodeNR - 32;
+      console.log("Code: " + this.option[inputID]);
+  };
+
   onBackClick(){
       this.router.navigate(['/dashboard']);
   }
-
 }

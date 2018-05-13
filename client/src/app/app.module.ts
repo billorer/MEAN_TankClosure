@@ -13,12 +13,14 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { OptionsComponent } from './components/options/options.component';
 import { MenuComponent } from './components/menu/menu.component';
+import { GameComponent } from './components/game/game.component';
 
 import { ValidateService } from './services/validate.service';
 import { AuthService } from './services/auth.service';
 import { SocketioService } from './services/socketio.service';
 import { FlashMessagesModule } from 'angular2-flash-messages';
 import { AuthGuard } from './guards/auth.guard';
+
 
 
 const appRoutes: Routes = [
@@ -29,6 +31,7 @@ const appRoutes: Routes = [
     {path:'profile', component: ProfileComponent, canActivate:[AuthGuard]},
     {path:'options', component: OptionsComponent, canActivate:[AuthGuard]},
     {path:'menu', component: MenuComponent, canActivate:[AuthGuard]},
+    {path:'game', component: GameComponent, canActivate:[AuthGuard]},
 ];
 
 @NgModule({
@@ -41,7 +44,8 @@ const appRoutes: Routes = [
     DashboardComponent,
     ProfileComponent,
     OptionsComponent,
-    MenuComponent
+    MenuComponent,
+    GameComponent
   ],
   imports: [
     BrowserModule,

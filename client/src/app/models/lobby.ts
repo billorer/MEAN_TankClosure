@@ -7,10 +7,11 @@ export class Lobby {
     lobbyCurPlayer:number;
     lobbyHostId: string;
     lobbyCurMaxPlayers: string;
+    lobbyInGame: boolean;
 
     constructor(pLobbyName:string, pLobbyPassword:string,
         pLobbyMap:number, pLobbyMaxPlayer:number, pLobbyHostId:string,
-        pLobbyCurPlayer:number){
+        pLobbyCurPlayer:number, pLobbyInGame:boolean){
         this.lobbyName = pLobbyName;
         this.lobbyPassword = pLobbyPassword;
         this.lobbyMap = pLobbyMap;
@@ -18,5 +19,6 @@ export class Lobby {
         this.lobbyCurPlayer = pLobbyCurPlayer;
         this.lobbyHostId = pLobbyHostId;
         this.lobbyCurMaxPlayers = pLobbyCurPlayer+"/"+pLobbyMaxPlayer;
+        this.lobbyInGame = pLobbyInGame;
     }
 }

@@ -65,16 +65,24 @@ router.post('/authenticate', (req, res, next) => {
                     expiresIn: 604800 //1 week in seconds
                 });
 
-                res.json({
-                    success: true,
-                    token: 'JWT ' + token,
-                    user: {
-                        id: user._id,
-                        first_name: user.first_name,
-                        last_name: user.last_name,
-                        username: user.username,
-                        email: user.email
+                Option.getOptionByUserId(user._id, (err, option) => {
+                    if(err) throw err;
+                    if(!option){
+                        return res.json({success: false, msg: 'Options not found!'});
                     }
+                    console.log("OPTIONS: " + option);
+                    res.json({
+                        success: true,
+                        token: 'JWT ' + token,
+                        user: {
+                            id: user._id,
+                            first_name: user.first_name,
+                            last_name: user.last_name,
+                            username: user.username,
+                            email: user.email
+                        },
+                        options: option
+                    });
                 });
             } else {
                 return res.json({success: false, msg: 'Wrong password!'});
