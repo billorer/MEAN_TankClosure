@@ -19,7 +19,7 @@ export class Bullet {
     draw(){
         var width = this.images.bullet.width / 2;
         var height = this.images.bullet.width / 2;
-
+        
         this.ctx.drawImage(this.images.bullet, 0, 0, this.images.bullet.width, this.images.bullet.height,
             this.x, this.y, width, height);
     };

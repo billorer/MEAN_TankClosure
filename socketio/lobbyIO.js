@@ -5,8 +5,7 @@ const Player = require('../models/player');
 var lobbies = {};
 var socketHashMapList = {};
 
-module.exports = lobbies;
-module.exports = socketHashMapList;
+module.exports = { lobbies, socketHashMapList };
 
 io.on('connection', (socket) => {
     console.log("A new socket connected: " + socket.id);
@@ -39,6 +38,7 @@ io.on('connection', (socket) => {
 
     socket.on('joinLobby', (data) => {
         let hostId = data.newPlayer.playerLobbyHostId;
+        //socket.join(hostId);
         // Check if the lobby exists and if it has free space
         if(lobbies.hasOwnProperty(hostId) && lobbies[hostId].lobbyCurPlayer < lobbies[hostId].lobbyMaxPlayer){
             console.log("Player: " + socket.id + " joined to lobby: " + hostId);
@@ -79,12 +79,12 @@ io.on('connection', (socket) => {
         io.emit('updateLobbiesList', {lobbies: lobbies});
     });
 
-    socket.on('changeLobbyStatus', (data) => {
-        if(lobbies.hasOwnProperty(data.lobbyHostId)){
-            lobbies[data.lobbyHostId].lobbyInGame = true;
-        }
-        io.emit('updateLobbiesList', {lobbies: lobbies});
-    });
+    // socket.on('changeLobbyStatus', (data) => {
+    //     if(lobbies.hasOwnProperty(data.lobbyHostId)){
+    //         lobbies[data.lobbyHostId].lobbyInGame = true;
+    //     }
+    //     io.emit('updateLobbiesList', {lobbies: lobbies});
+    // });
 
     socket.on('disconnect', () => {
         //delete the lobbies of the socket if there is any

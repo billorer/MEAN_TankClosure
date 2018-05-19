@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
 
     ngOnInit() {
     }
-
+    
     onLoginSubmit(){
         const user = {
             username: this.username,

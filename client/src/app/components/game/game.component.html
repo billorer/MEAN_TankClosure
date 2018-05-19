@@ -1,5 +1,5 @@
-<div *ngIf="selection" class="container">
-    <!-- <div class="menu">
+<!-- <div *ngIf="selection" class="container">
+    <div class="menu">
         <div class="row">
             <div class="demo-3 col-md-4">
                 <div class="demo-3 col-md-4">
@@ -13,13 +13,13 @@
 
             </div>
         </div>
-    </div> -->
+    </div>
     <ul class="list-group">
         <button type="button" (click)="play()" class="list-group-item list-group-item-action" >Play</button>
         <button type="button" (click)="onBackClick()" class="list-group-item list-group-item-action">Back</button>
     </ul>
-</div>
-<div *ngIf="!selection" id="gameDiv">
+</div> -->
+<div #gameDiv>
     <div class="col-lg-9">
         <canvas #mainCanvas width='1050' height='750'></canvas>
     </div>

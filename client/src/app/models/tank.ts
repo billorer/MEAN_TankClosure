@@ -15,11 +15,14 @@ export class Tank {
 
     xPlayerPivot: number;
     yPlayerPivot: number;
+
     canShoot: boolean;
     recoilSpeed: number;
 
     ctx:CanvasRenderingContext2D;
     images: any;
+
+    TO_RADIANS: number;
 
     constructor(initPack, ctx, images){
         this.id = initPack.id;
@@ -33,34 +36,25 @@ export class Tank {
         this.mouseAngle = initPack.mouseAngle;
         this.curBullet = initPack.curBullet;
         this.imgNR = initPack.imgNR;
+
         //default
         this.reloading = false;
 
         this.ctx = ctx;
         this.images = images;
 
+        this.TO_RADIANS = Math.PI/180;
     }
 
     drawHP() {
         let hpWidth = 50 * this.hp / this.hpMax;
-        // ctx.shadowBlur = 20;
-        // ctx.shadowColor = "#ff4949";
-        // ctx.lineWidth = 2.5;
-        // ctx.strokeStyle = "#003300";
-        //console.log("this: " + this.hp + " " + this.hpMax);
         this.ctx.fillStyle = "red";
         this.ctx.fillRect(this.xPlayerPivot - hpWidth / 2, this.yPlayerPivot - 40, hpWidth, 4);
-        //ctx.shadowColor = "rgba(0, 0, 0, 0)";
-        //console.log("HPWIDTH: " + hpWidth + " " + this.hp + " " + this.hpMax);
     };
 
     drawTankBody(TO_RADIANS, tankBodyImage) {
-
         this.xPlayerPivot = this.x + tankBodyImage.width / 2;
         this.yPlayerPivot = this.y + tankBodyImage.height / 2;
-
-        var width = tankBodyImage.width;
-        var height = tankBodyImage.height;
 
         /// we make sure that the current state is saved
         this.ctx.save();
@@ -74,7 +68,7 @@ export class Tank {
 
         /// translate back before drawing the sprite
         this.ctx.translate(-this.xPlayerPivot, -this.yPlayerPivot);
-        this.ctx.drawImage(tankBodyImage, 0, 0, width, height, this.x, this.y, width, height);
+        this.ctx.drawImage(tankBodyImage, 0, 0, tankBodyImage.width, tankBodyImage.height, this.x, this.y, tankBodyImage.width, tankBodyImage.height);
 
         this.ctx.restore();
     };
@@ -91,13 +85,13 @@ export class Tank {
         /// translate back before drawing the sprite
         this.ctx.translate(-this.xPlayerPivot, -this.yPlayerPivot);
 
-        var newXTower = this.x + tankBodyImage.width / 2 - tankTowerImage.width / 2;
-        var newYTower = this.y + tankBodyImage.height / 2 - tankTowerImage.width / 2;
+        let newXTower = this.x + tankBodyImage.width / 2 - tankTowerImage.width / 2;
+        let newYTower = this.y + tankBodyImage.height / 2 - tankTowerImage.width / 2;
 
-        if(this.canShoot == false && this.recoilSpeed < 17 && !this.reloading){
+        if(!this.canShoot && this.recoilSpeed < 17 && !this.reloading) {
             this.recoilSpeed += 1.5;
             newYTower -= this.recoilSpeed;
-        }else{
+        } else {
             this.recoilSpeed = 0;
         }
 
@@ -106,15 +100,11 @@ export class Tank {
     };
 
     draw() {
-      if(this.imgNR != 0){
-        var TO_RADIANS = Math.PI/180;
-        var tankBodyImage = this.images.tankBodies[this.imgNR - 1];
-        var tankTowerImage = this.images.tankTowers[this.imgNR - 1];
+        let tankBodyImage = this.images.tankBodies[this.imgNR];
+        let tankTowerImage = this.images.tankTowers[this.imgNR];
 
-        this.drawTankBody(TO_RADIANS, tankBodyImage);
-        this.drawTankTower(TO_RADIANS, tankBodyImage, tankTowerImage);
-
+        this.drawTankBody(this.TO_RADIANS, tankBodyImage);
+        this.drawTankTower(this.TO_RADIANS, tankBodyImage, tankTowerImage);
         this.drawHP();
-      }
   };
 }

@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ImagesService } from '../../services/images.service';
 import { FlashMessagesService } from 'angular2-flash-messages';
 import { SocketioService } from '../../services/socketio.service';
+import { environment } from '../../../environments/environment';
 
 import { Observable } from "rxjs";
 
@@ -15,63 +17,76 @@ import { Bullet } from '../../models/bullet';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
-    selection: boolean;
     selfId: string;
+    lobbyHostId: string;
+
+    images:any;
 
     tanksList: Tank[];
     bulletsList: Bullet[];
-
-    images: any;
-    imgPath: string;
-
-    lastDownTarget: any;
 
     controllerButtons: any;
 
     @ViewChild('mainCanvas') mainCanvas: ElementRef;
     context: CanvasRenderingContext2D;
+    canvasHeight: number;
+    canvasWidth: number;
 
     gameLoop: any;
 
     constructor(private flashMessage: FlashMessagesService,
       private router: Router,
       private authService: AuthService,
-      private socketioService: SocketioService) { }
+      private socketioService: SocketioService,
+      private imagesService: ImagesService) { }
 
     ngAfterViewInit() {
-        // if(!this.selection){
-        //     this.context = (<HTMLCanvasElement>this.mainCanvas.nativeElement).getContext('2d');
-        //     this.context.font = '30px Arial';
-        // }
+
     }
 
     ngOnDestroy() {
+      //console.log("DESTROY");
       this.gameLoop.unsubscribe();
+      this.socketioService.removeEventListener('lobbyHost');
+      this.socketioService.removeEventListener('update');
+      this.socketioService.removeEventListener('initializeGame');
+      this.socketioService.removeEventListener('remove');
+      this.socketioService.removeEventListener('explosion');
     }
 
     ngOnInit() {
-      this.selection = true;
       this.selfId = null;
+      this.lobbyHostId = null;
       this.tanksList = new Array();
       this.bulletsList = new Array();
       this.controllerButtons = this.authService.getOptionsFromLStorage();
 
-      this.initializeImages();
-      this.placeListeners();
+      this.images = this.imagesService.getImages();
+
+      this.initializeCanvas();
+      this.initializeGameListeners();
+
+      //start the gameloop
+      this.startGameLoop();
     }
 
-    drawMap(){
-        this.context.drawImage(this.images.map, 0, 0);
-    };
+    initializeCanvas(){
+        this.context = (<HTMLCanvasElement>this.mainCanvas.nativeElement).getContext('2d');
+        this.context.font = '30px Arial';
+        this.canvasWidth = (<HTMLCanvasElement>this.mainCanvas.nativeElement).width;
+        this.canvasHeight = (<HTMLCanvasElement>this.mainCanvas.nativeElement).height;
+    }
+
+    // drawMap(){
+    //     this.context.drawImage(this.images.map, 0, 0);
+    // };
 
     drawCircle(){
-        var radius = 45;
-
         var cx = this.tanksList[this.selfId].x;
         var cy = this.tanksList[this.selfId].y;
 
-        var tankBodyImage = this.images.tankBodies[this.tanksList[this.selfId].imgNR - 1];
-        var tankTowerImage = this.images.tankTowers[this.tanksList[this.selfId].imgNR - 1];
+        var tankBodyImage = this.images.tankBodies[this.tanksList[this.selfId].imgNR];
+        var tankTowerImage = this.images.tankTowers[this.tanksList[this.selfId].imgNR];
 
         var xPlayerPivot = this.tanksList[this.selfId].x + tankBodyImage.width / 2;
         var yPlayerPivot = this.tanksList[this.selfId].y + tankBodyImage.height / 2;
@@ -81,7 +96,7 @@ export class GameComponent implements OnInit {
         this.context.lineWidth = 2.5;
         this.context.strokeStyle = "#003300";
         this.context.beginPath();
-        this.context.arc(xPlayerPivot, yPlayerPivot, radius, 0, 2 * Math.PI);
+        this.context.arc(xPlayerPivot, yPlayerPivot, environment.tankCircleRadius, 0, 2 * Math.PI);
         this.context.stroke();
 
         this.context.shadowColor = "rgba(0, 0, 0, 0)";
@@ -102,39 +117,28 @@ export class GameComponent implements OnInit {
         this.context.fillText("Reloading... ", 5, 110);
     };
 
-    placeListeners(){
-        this.socketioService.removeEventListener('initializeGame');
+    initializeGameListeners(){
+        this.socketioService.on('lobbyHost', (data) => {
+            this.lobbyHostId = data.lobbyHostId;
+        });
+
         this.socketioService.on('initializeGame', (data) => {
-            if(this.selection)
-                return;
-
-            if(data.selfId){
-                console.log("DataSelfID: " + data.selfId);
-                this.selfId = data.selfId;
-            }
-
-            this.context = (<HTMLCanvasElement>this.mainCanvas.nativeElement).getContext('2d');
-            this.context.font = '30px Arial';
-            //console.log("Contextus: " + this.context);
-
-            for(var i = 0; i < data.player.length; i++){
+            let thisSocketId = this.socketioService.getId();
+            for(let i = 0; i < data.player.length; i++){
+                if(data.player[i].id == thisSocketId){
+                    this.selfId = thisSocketId;
+                }
                 this.tanksList[data.player[i].id] = new Tank(data.player[i], this.context, this.images);
             }
-
-            for(var i = 0; i < data.bullet.length; i++){
+            for(let i = 0; i < data.bullet.length; i++){
                 this.bulletsList[data.bullet[i].id] = new Bullet(data.bullet[i], this.context, this.images);
             }
         });
 
-        this.socketioService.removeEventListener('update');
     	this.socketioService.on('update', (data) => {
-            if(this.selection)
-                return;
-            //console.log("updateGame: ");
-
-    		for(var i = 0; i < data.player.length; i++) {
-    			var pack = data.player[i];
-    			var p = this.tanksList[pack.id];
+    		for(let i = 0; i < data.player.length; i++) {
+    			let pack = data.player[i];
+    			let p = this.tanksList[pack.id];
     			if(p){
     				if(pack.x !== undefined)
     					p.x = pack.x;
@@ -162,9 +166,9 @@ export class GameComponent implements OnInit {
     			}
     		}
 
-    		for(var i = 0; i < data.bullet.length; i++){
-    			var pack = data.bullet[i];
-    			var b = this.bulletsList[pack.id];
+    		for(let i = 0; i < data.bullet.length; i++){
+    			let pack = data.bullet[i];
+    			let b = this.bulletsList[pack.id];
 
     			if(b){
     				if(pack.x !== undefined)
@@ -172,70 +176,33 @@ export class GameComponent implements OnInit {
     				if(pack.y !== undefined)
     					b.y = pack.y;
     			}
-    		}
+              }
     	});
 
-    	this.socketioService.removeEventListener('remove');
     	this.socketioService.on('remove', (data) => {
-            if(this.selection)
-                return;
-    		for(var i = 0; i < data.player.length; i++){
+    		for(let i = 0; i < data.player.length; i++){
     			delete this.tanksList[data.player[i]];
     		}
-    		for(var i = 0; i < data.bullet.length; i++){
+    		for(let i = 0; i < data.bullet.length; i++){
     			delete this.bulletsList[data.bullet[i]];
     		}
     	});
+
+        this.socketioService.on('explosion', (data) => {
+            //explosion(data);
+            this.socketioService.emit('reset', {data: data});
+        });
     }
 
-    initializeImages(){
-        this.imgPath = '/assets/img/'
-
-        this.images = {};
-        this.images.bullet = new Image();
-        this.images.bullet.src = this.imgPath + 'bullet2.png';
-
-        this.images.map = new Image();
-        this.images.map.src = this.imgPath + 'map.png';
-
-        this.images.tankBodies = {};
-        this.images.tankTowers = {};
-
-        this.images.tankBodies[0] = new Image();
-        this.images.tankBodies[0].src = this.imgPath + 'tanks/tank1_body.png';
-        this.images.tankTowers[0] = new Image();
-        this.images.tankTowers[0].src = this.imgPath + 'tanks/tank1_tower.png';
-
-        this.images.tankBodies[1] = new Image();
-        this.images.tankBodies[1].src = this.imgPath + 'tanks/tank2_body.png';
-        this.images.tankTowers[1] = new Image();
-        this.images.tankTowers[1].src = this.imgPath + 'tanks/tank2_tower.png';
-
-        this.images.tankBodies[2] = new Image();
-        this.images.tankBodies[2].src = this.imgPath + 'tanks/tank3_body.png';
-        this.images.tankTowers[2] = new Image();
-        this.images.tankTowers[2].src = this.imgPath + 'tanks/tank3_tower.png';
-    }
-
-    play(){
-        this.selection = false;
-
-        //var controllerParameterObject = JSON.parse(controllerParameters);
-		//controllerButtons = controllerParameterObject.controlButtons;
-
-        var imgNR = 1;
-        var tankBodyImage = this.images.tankBodies[imgNR - 1];
-        this.socketioService.emit('startGame', {});
-        this.socketioService.emit('playerImgData', {imgNR: imgNR, width:tankBodyImage.width, height:tankBodyImage.height});
-
-        this.gameLoop = Observable.timer(0, 100).subscribe(() => {
+    startGameLoop(){
+        //Timer's first argument: after how much time should it started
+        //Timer's second argument: after how much time should it repeat itself
+        this.gameLoop = Observable.timer(0, environment.gameFps).subscribe(() => {
             if(!this.selfId)
                 return;
+            //console.log("gameloop");
+            this.context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 
-            let WIDTH = (<HTMLCanvasElement>this.mainCanvas.nativeElement).width;
-      	    let HEIGHT = (<HTMLCanvasElement>this.mainCanvas.nativeElement).height;
-            this.context.clearRect(0, 0, WIDTH, HEIGHT);
-    		//drawMap();
     		this.drawCircle();
     		this.drawScore();
     		this.drawRemainingBullets();
@@ -246,101 +213,89 @@ export class GameComponent implements OnInit {
     		for(var i in this.tanksList){
     			this.tanksList[i].draw();
     		}
+            //console.log(this.bulletsList);
     		for(var i in this.bulletsList)
     			this.bulletsList[i].draw();
         });
     }
 
+    /////////////////////////////////////////////////////
+    /////////////LISTENERS///////////////////////////////
+    /////////////////////////////////////////////////////
     @HostListener('document:keyup', ['$event'])
     keyUp(event){
-        //if(this.lastDownTarget == this.mainCanvas.nativeElement) {
-            if(event.keyCode == this.controllerButtons.rightCode)//68) //d
-                this.socketioService.emit('keyPress', {inputId:'right', state:false});
-            if(event.keyCode == this.controllerButtons.backwardCode)//83) //s
-                this.socketioService.emit('keyPress', {inputId:'down', state:false});
-            if(event.keyCode == this.controllerButtons.leftCode)//65) //a
-                this.socketioService.emit('keyPress', {inputId:'left', state:false});
-            if(event.keyCode ==this.controllerButtons.forwardCode) //87) //w
-                this.socketioService.emit('keyPress', {inputId:'up', state:false});
-            //if(event.keyCode == controllerButtons.attack)
-            //    this.socketioService.emit('keyPress', {inputId:'attack', state:false});
-        //}
+        if(event.keyCode == this.controllerButtons.rightCode)//68) //d
+            this.socketioService.emit('keyPress', {inputId:'right', state:false});
+        if(event.keyCode == this.controllerButtons.backwardCode)//83) //s
+            this.socketioService.emit('keyPress', {inputId:'down', state:false});
+        if(event.keyCode == this.controllerButtons.leftCode)//65) //a
+            this.socketioService.emit('keyPress', {inputId:'left', state:false});
+        if(event.keyCode ==this.controllerButtons.forwardCode) //87) //w
+            this.socketioService.emit('keyPress', {inputId:'up', state:false});
+        //if(event.keyCode == controllerButtons.attack)
+        //    this.socketioService.emit('keyPress', {inputId:'attack', state:false});
     }
 
     @HostListener('document:keydown', ['$event'])
     keyDown(event){
-        //if(this.lastDownTarget == this.mainCanvas.nativeElement) {
-            if(event.keyCode == this.controllerButtons.rightCode)//68) //d
-                this.socketioService.emit('keyPress', {inputId:'right', state:true});
-            if(event.keyCode == this.controllerButtons.backwardCode)//83) //s
-                this.socketioService.emit('keyPress', {inputId:'down', state:true});
-            if(event.keyCode == this.controllerButtons.leftCode)//65) //a
-                this.socketioService.emit('keyPress', {inputId:'left', state:true});
-            if(event.keyCode ==this.controllerButtons.forwardCode) //87) //w
-                this.socketioService.emit('keyPress', {inputId:'up', state:true});
-    		//if(event.keyCode == controllerButtons.attack)
-    			//this.socketioService.emit('keyPress', {inputId:'attack', state:true});
-        //}
+        //console.log(event);
+        if(event.keyCode == this.controllerButtons.rightCode)//68) //d
+            this.socketioService.emit('keyPress', {inputId:'right', state:true});
+        if(event.keyCode == this.controllerButtons.backwardCode)//83) //s
+            this.socketioService.emit('keyPress', {inputId:'down', state:true});
+        if(event.keyCode == this.controllerButtons.leftCode)//65) //a
+            this.socketioService.emit('keyPress', {inputId:'left', state:true});
+        if(event.keyCode ==this.controllerButtons.forwardCode) //87) //w
+            this.socketioService.emit('keyPress', {inputId:'up', state:true});
+		//if(event.keyCode == controllerButtons.attack)
+			//this.socketioService.emit('keyPress', {inputId:'attack', state:true});
+
     }
 
     @HostListener('document:mousedown', ['$event'])
     mouseDown(event){
-        //if(this.lastDownTarget == this.mainCanvas.nativeElement) {
-            //this.lastDownTarget = event.target;
-            this.socketioService.emit('keyPress', {inputId:'attack', state:true});
-        //}
+        // we update the mouseangle then we attack
+        this.updateMouseAngleAndPosition(event, true);
     }
 
     @HostListener('document:mouseup', ['$event'])
     mouseUp(event){
-        //if(this.lastDownTarget == this.mainCanvas.nativeElement) {
-            //if(controllerButtons.attack == 1){
-                this.socketioService.emit('keyPress', {inputId:'attack', state:false});
-            //}
-        //}
+        this.socketioService.emit('keyPress', {inputId:'attack', state:false});
     }
 
     @HostListener('document:mousemove', ['$event'])
     onMouseMove(event) {
-      let selfId = this.selfId;
+        this.updateMouseAngleAndPosition(event, false);
+    }
 
-      //selfID szukseges, h tudjuk, melyik jatekosrol beszelunk, az imgNR meg akkor nem nulla, ha a jatekos mar kivalasztott maganak egy tankot
-      if(selfId != null && this.tanksList[selfId].imgNR != 0){
+    updateMouseAngleAndPosition(event, attack){
+        //selfID szukseges, h tudjuk, melyik jatekosrol beszelunk
+        if(this.selfId != null){
 
-        var cx = this.tanksList[selfId].x + this.images.tankBodies[this.tanksList[selfId].imgNR - 1].width / 2;
-        var cy = this.tanksList[selfId].y + this.images.tankBodies[this.tanksList[selfId].imgNR - 1].height / 2;
+          let cx = this.tanksList[this.selfId].x + this.images.tankBodies[this.tanksList[this.selfId].imgNR].width / 2;
+          let cy = this.tanksList[this.selfId].y + this.images.tankBodies[this.tanksList[this.selfId].imgNR].height / 2;
 
-        //Math.sqrt(Math.pow(self.x - pt.x, 2) + Math.pow(self.y - pt.y, 2));
-        var radius = 80;
+          // get mouse x/y
+          let r = this.mainCanvas.nativeElement.getBoundingClientRect(),
+              mx = event.clientX - r.left,
+              my = event.clientY - r.top;
 
-        // get mouse x/y
-        var r = this.mainCanvas.nativeElement.getBoundingClientRect(),
-            mx = event.clientX - r.left,
-            my = event.clientY - r.top;
+          // get diff. between mouse and circle center
+          let dx = mx - cx,
+              dy = my - cy,
+              angle = Math.atan2(dy, dx);
 
-        // get diff. between mouse and circle center
-        var dx = mx - cx,
-            dy = my - cy,
-            angle = Math.atan2(dy, dx);
+          // get new point
+          let x = cx + environment.tankTowerRadius * Math.cos(angle),
+              y = cy + environment.tankTowerRadius * Math.sin(angle);
 
-        // get new point
-        var x = cx + radius * Math.cos(angle),
-            y = cy + radius * Math.sin(angle);
+          this.socketioService.emit('keyPress', {inputId:'mouseAngle', state:angle / Math.PI * 180, x:x, y:y});
 
-        // draw line to mouse
-        //ctx.beginPath();
-        //ctx.moveTo(cx, cy);
-        //ctx.lineTo(mx, my);
-        //ctx.stroke();
-
-        // draw dot on new point
-        //ctx.fillRect(x - 2, y - 2, 8, 8);
-        this.socketioService.emit('keyPress', {inputId:'mouseAngle', state:angle / Math.PI * 180, x:x, y:y});
-      }
+          attack && this.socketioService.emit('keyPress', {inputId:'attack', state:true});
+        }
     }
 
     onBackClick(){
         this.router.navigate(['/menu']);
     }
-
 }

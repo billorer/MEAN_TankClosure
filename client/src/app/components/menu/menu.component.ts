@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ImagesService } from '../../services/images.service';
 import { FlashMessagesService } from 'angular2-flash-messages';
 import { SocketioService } from '../../services/socketio.service';
 
@@ -23,7 +24,8 @@ export class MenuComponent implements OnInit {
     constructor(private flashMessage: FlashMessagesService,
         private router: Router,
         private authService: AuthService,
-        private socketioService: SocketioService
+        private socketioService: SocketioService,
+        private imagesService: ImagesService
     ) { }
 
     initializeLocalVariables(){
@@ -36,11 +38,6 @@ export class MenuComponent implements OnInit {
 
     ngOnInit() {
         this.initializeLocalVariables();
-
-        this.socketioService.removeEventListener('updateLobbiesList');
-        this.socketioService.removeEventListener('updatePlayersList');
-        this.socketioService.removeEventListener('kickLobbyPlayer');
-
         this.socketioService.emit('getLobbies',{});
         this.socketioService.on('updateLobbiesList', (data) => {
             console.log("UpdateLobbiesList: ");
@@ -55,6 +52,17 @@ export class MenuComponent implements OnInit {
             this.lobbyList = true;
             this.flashMessage.show(data.msg, {cssClass: 'alert-danger', timeout: 3000});
         });
+        this.socketioService.on('navigateToCanvas', (data) => {
+            this.router.navigate(['/game']);
+            console.log("The match has been started!");
+        });
+    }
+
+    ngOnDestroy() {
+        this.socketioService.removeEventListener('navigateToCanvas');
+        this.socketioService.removeEventListener('updateLobbiesList');
+        this.socketioService.removeEventListener('updatePlayersList');
+        this.socketioService.removeEventListener('kickLobbyPlayer');
     }
 
     onLobbySubmit(){
@@ -123,18 +131,23 @@ export class MenuComponent implements OnInit {
     }
 
     startMatch() {
+        if(this.checkIfAPlayerNotReady())
+            return;
+        let imgNR = 0;
+        let tankBodyImage = this.imagesService.getImages().tankBodies[imgNR];
+        this.socketioService.emit('startGame', {lobbyId: this.lobby.lobbyHostId, playerImgData: { imgNR: imgNR, width:tankBodyImage.width, height:tankBodyImage.height } });
+    }
+
+    // Iterates through the players and returns true, if someone's not ready
+    checkIfAPlayerNotReady(){
         for (let curPlayer in this.players){
             if(this.players.hasOwnProperty(curPlayer)){
                 if(this.players[curPlayer].playerStatus === false){
-                    return;
+                    return true;
                 }
             }
         }
-        this.socketioService.emit('changeLobbyStatus', {lobbyHostId: this.lobby.lobbyHostId});
-
-        console.log("Lobby: " + this.lobby.lobbyName + " " +  this.lobby.lobbyInGame);
-        this.router.navigate(['/game']);
-        console.log("The match has been started!");
+        return false;
     }
 
     onBackClick(){

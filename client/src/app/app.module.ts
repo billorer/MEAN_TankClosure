@@ -17,6 +17,7 @@ import { GameComponent } from './components/game/game.component';
 
 import { ValidateService } from './services/validate.service';
 import { AuthService } from './services/auth.service';
+import { ImagesService } from './services/images.service';
 import { SocketioService } from './services/socketio.service';
 import { FlashMessagesModule } from 'angular2-flash-messages';
 import { AuthGuard } from './guards/auth.guard';
@@ -54,7 +55,7 @@ const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes),
     FlashMessagesModule.forRoot()
   ],
-  providers: [ValidateService, AuthService, AuthGuard, SocketioService],
+  providers: [ValidateService, AuthService, AuthGuard, SocketioService, ImagesService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
