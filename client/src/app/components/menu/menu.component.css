@@ -1,0 +1,9 @@
+.whiteFont {
+    color: #FFF;
+}
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  background-color: #006eff;
+}
+table th, td {
+    text-align: center;
+}

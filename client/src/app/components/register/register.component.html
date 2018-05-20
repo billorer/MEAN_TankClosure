@@ -1,5 +1,5 @@
-<h2 class="page-header">Register</h2>
-<form (submit)="onRegisterSubmit()">
+<h2 class="page-header whiteFont">Register</h2>
+<form (submit)="onRegisterSubmit()" class="whiteFont">
     <div class="form-group">
         <label>First Name</label>
         <input type="text" [(ngModel)]="first_name" name="first_name" class="form-control">
@@ -20,8 +20,10 @@
         <label>Password</label>
         <input type="password" [(ngModel)]="password" name="password" class="form-control">
     </div>
-    <input type="submit" class="btn btn-primary" value="Register">
+    <input type="submit" class="btn btn-success" value="Register">
 </form>
 <ul class="list-group">
-    <button type="button" (click)="onBackClick()" class="list-group-item list-group-item-action">Back</button>
+    <li>
+        <button type="button" (click)="onBackClick()" class="list-group-item list-group-item-action">Back</button>
+    </li>
 </ul>

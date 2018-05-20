@@ -21,6 +21,9 @@ export class MenuComponent implements OnInit {
 
     lobbyList: boolean = true;
 
+    lobbyPass: string;
+    //show: boolean = false;
+
     constructor(private flashMessage: FlashMessagesService,
         private router: Router,
         private authService: AuthService,
@@ -63,6 +66,10 @@ export class MenuComponent implements OnInit {
         this.socketioService.removeEventListener('updateLobbiesList');
         this.socketioService.removeEventListener('updatePlayersList');
         this.socketioService.removeEventListener('kickLobbyPlayer');
+
+        this.socketioService.removeEventListener('joinSuccess');
+        this.socketioService.removeEventListener('joinUnSuccess');
+        this.socketioService.removeEventListener('joinLobby');
     }
 
     onLobbySubmit(){
@@ -96,22 +103,35 @@ export class MenuComponent implements OnInit {
         }
     }
 
-    onJoinLobbyClick(pHostId){
-        this.socketioService.removeEventListener('joinSuccess');
-        this.socketioService.removeEventListener('joinUnSuccess');
-        this.socketioService.removeEventListener('joinLobby');
+    onJoinSubmit(pHostId, pLobbyPassword, index){
+        if(this.lobbyPass == pLobbyPassword){
+            this.joinLobby(pHostId);
+        }
+        else{
+            console.log("Player faild to join: bad password!");
+            this.flashMessage.show('The lobby password is incorrect!', {cssClass: 'alert-danger', timeout: 3000});
+        }
+        this.lobbies[index].showPassForm = false;
+    }
 
+    onJoinLobbyClick(pHostId, pLobbyPassword, index){
+        if(pLobbyPassword){
+            this.lobbies[index].showPassForm = true;
+        }else{
+            this.joinLobby(pHostId);
+        }
+    }
+
+    joinLobby(pHostId){
         this.player = new Player(pHostId, this.socketioService.getId(), this.authService.getUserNameFromLStorage(), false);
-
         this.socketioService.emit('joinLobby', {newPlayer: this.player});
-
         this.socketioService.on('joinSuccess', (data) => {
             console.log("Player joined successfully:");
             this.lobbyList = false;
             this.flashMessage.show('You joined the lobby!', {cssClass: 'alert-success', timeout: 3000});
         });
         this.socketioService.on('joinUnSuccess', (data) => {
-            console.log("Player faild to join:");
+
             this.flashMessage.show('The lobby is full!', {cssClass: 'alert-danger', timeout: 3000});
         });
     }

@@ -1,5 +1,5 @@
-<h2 class="page-header">Login</h2>
-<form (submit)="onLoginSubmit()">
+<h2 class="page-header whiteFont">Login</h2>
+<form (submit)="onLoginSubmit()" class="whiteFont">
     <div class="form-group">
         <label>Username</label>
         <input type="text" [(ngModel)]="username" name="username" class="form-control">
@@ -8,5 +8,8 @@
         <label>Password</label>
         <input type="password" [(ngModel)]="password" name="password" class="form-control">
     </div>
-    <input type="submit" class="btn btn-primary" value="Login">
+    <input type="submit" class="btn btn-success" value="Login">
 </form>
+<ul class="list-group">
+    <button type="button" (click)="onBackClick()" class="list-group-item list-group-item-action">Back</button>
+</ul>

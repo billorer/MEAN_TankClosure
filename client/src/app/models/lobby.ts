@@ -8,6 +8,7 @@ export class Lobby {
     lobbyHostId: string;
     lobbyCurMaxPlayers: string;
     lobbyInGame: boolean;
+    showPassForm: boolean;
 
     constructor(pLobbyName:string, pLobbyPassword:string,
         pLobbyMap:number, pLobbyMaxPlayer:number, pLobbyHostId:string,
@@ -20,5 +21,6 @@ export class Lobby {
         this.lobbyHostId = pLobbyHostId;
         this.lobbyCurMaxPlayers = pLobbyCurPlayer+"/"+pLobbyMaxPlayer;
         this.lobbyInGame = pLobbyInGame;
+        this.showPassForm = false;
     }
 }
