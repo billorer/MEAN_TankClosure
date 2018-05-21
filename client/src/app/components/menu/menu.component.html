@@ -42,52 +42,63 @@
     </ul>
 </div>
 <div *ngIf="!lobbyList" id="currentLobby">
-    <table class="table table-hover whiteFont">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">PlayerName</th>
-          <th scope="col">PlayerStatus</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let curPlayer of players">
-          <th scope="row">{{$index}}</th>
-          <td>{{curPlayer.playerName}}</td>
-          <td>{{curPlayer.playerStatus}}</td>
-          <td>
-              <button *ngIf="player.playerId==curPlayer.playerId" type="button" (click)="onPlayerReadyClick(curPlayer.playerId, curPlayer.playerLobbyHostId, curPlayer.playerStatus)" class="btn btn-success">{{curPlayer.playerStatus ? "Unready" : "Ready"}}</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="container">
+        <table class="table table-hover whiteFont">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">PlayerName</th>
+              <th scope="col">PlayerStatus</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let curPlayer of players; let myIndex = index">
+              <th scope="row">{{myIndex}}</th>
+              <td>{{curPlayer.playerName}}</td>
+              <td>{{curPlayer.playerStatus}}</td>
+              <td>
+                  <button *ngIf="player.playerId==curPlayer.playerId" type="button" (click)="onPlayerReadyClick(curPlayer.playerId, curPlayer.playerLobbyHostId, curPlayer.playerStatus)" class="btn btn-success">{{curPlayer.playerStatus ? "Unready" : "Ready"}}</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div #chooseTankDiv class="menu">
+            <div class="row">
+                <div class="demo-3 col-md-4">
+                    <figure (click)="chosenTank(0);">
+                        <img class="img-responsive" src='../assets/img/tanks/tank1.png' alt='tank1Image'/>
+                        <figcaption>
+                            <h2>Green Grass!</h2>
+                            <p>Has a great health and damage rate!</p>
+                        </figcaption>
+                    </figure>
+                </div>
+                <div class="demo-3 col-md-4">
+                    <figure (click)="chosenTank(1);">
+                        <img class="img-responsive" src='../assets/img/tanks/tank2.png' alt='tank2Image'/>
+                        <figcaption>
+                            <h2>Green Grass!</h2>
+                            <p>Has a great health and damage rate!</p>
+                        </figcaption>
+                    </figure>
+                </div>
+                <div class="demo-3 col-md-4">
+                    <figure (click)="chosenTank(2);">
+                        <img class="img-responsive" src='../assets/img/tanks/tank3.png' alt='tank3Image'/>
+                        <figcaption>
+                            <h2>Green Grass!</h2>
+                            <p>Has a great health and damage rate!</p>
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
+        </div>
+    </div>
     <ul class="list-group">
         <button *ngIf="player.playerId==player.playerLobbyHostId" type="button" (click)="startMatch()" class="list-group-item list-group-item-action" >Start match</button>
         <button type="button" (click)="onLeaveClick(player.playerId, player.playerLobbyHostId)" class="list-group-item list-group-item-action">Leave</button>
     </ul>
 </div>
-<!-- <div class="modal fade" id="lobbyJoinModal" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Create Lobby</h4>
-        </div>
-        <div class="modal-body">
-            <form (submit)="onLobbySubmit();">
-                <div class="form-group">
-                    <label>Lobby Password</label>
-                    <input type="password" [(ngModel)]="lobby.lobbyPassword" name="lobbyPassword" placeholder="Optional" class="form-control">
-                </div>
-                <input type="submit" class="btn btn-primary" value="Create">
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-default closeButton" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-</div> -->
 <!-- Create lobby Modal -->
 <div class="modal fade" id="lobbyCreateModal" role="dialog">
     <div class="modal-dialog">

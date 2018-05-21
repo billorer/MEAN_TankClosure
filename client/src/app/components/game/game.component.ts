@@ -34,6 +34,8 @@ export class GameComponent implements OnInit {
 
     gameLoop: any;
 
+    gameTime: any;
+    curTime: number;
     constructor(private flashMessage: FlashMessagesService,
       private router: Router,
       private authService: AuthService,
@@ -66,6 +68,46 @@ export class GameComponent implements OnInit {
       this.initializeCanvas();
       this.initializeGameListeners();
 
+      var date = new Date(); // Generate a timestamp when you need to start countdown
+      //console.log(new Date().getTime() - date.getTime()); // When you need, subtract saved date from new one
+
+
+// //create a function to stop the time
+// function stopTime( ) { /* check if seconds, minutes and hours are not equal to 0 */
+// if ( seconds !== 0 || minutes !== 0 || hours !== 0 ) {
+//     /* display the full time before reseting the stop watch */
+//     var fulltime = document .getElementById( "fulltime" );
+//     //display the full time
+//     fulltime.style.display = "block";
+//     var time = gethours + mins + secs;
+//     fulltime.innerHTML = 'Fulltime: ' + time;
+//     // reset the stop watch
+//     seconds = 0;
+//     minutes = 0;
+//      hours = 0;
+//      secs = '0' + seconds; mins = '0' + minutes + ': '; gethours = '0' + hours + ': ';
+//      /* display the stopwatch after it's been stopped */
+//      var x = document.getElementById ("timer");
+//      var stopTime = gethours + mins + secs;
+//      x.innerHTML = stopTime;
+//      /* display all stop watch control buttons */
+//      var showStart = document.getElementById ('start');
+//      showStart.style.display = "inline-block";
+//      var showStop = document.getElementById ("stop");
+//      showStop.style.display = "inline-block"; /* clear the stop watch using the setTimeout( ) return value 'clearTime' as ID */
+//      clearTimeout( clearTime ); } //
+//      if () } //
+//      stopTime() /* you need to call the stopTime( ) function to terminate the stop watch */
+//      window.addEventListener( 'load', function ( ) { var stop = document.getElementById ("stop"); stop.addEventListener( 'click', stopTime ); });
+//      // stopwatch.js end
+
+
+
+
+
+
+     // this.gameTime = 10000;
+      this.gameTime = Observable.interval(1000).map(x => (this.curTime = new Date().getTime() - date.getTime())/1000).share();
       //start the gameloop
       this.startGameLoop();
     }
@@ -198,6 +240,10 @@ export class GameComponent implements OnInit {
         //Timer's first argument: after how much time should it started
         //Timer's second argument: after how much time should it repeat itself
         this.gameLoop = Observable.timer(0, environment.gameFps).subscribe(() => {
+            if(this.curTime > 100000){
+                console.log("GAME OVER");
+                this.gameLoop.unsubscribe();
+            }
             if(!this.selfId)
                 return;
             //console.log("gameloop");

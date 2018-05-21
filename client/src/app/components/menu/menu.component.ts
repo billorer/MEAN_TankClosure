@@ -22,7 +22,7 @@ export class MenuComponent implements OnInit {
     lobbyList: boolean = true;
 
     lobbyPass: string;
-    //show: boolean = false;
+    imgNr: number;
 
     constructor(private flashMessage: FlashMessagesService,
         private router: Router,
@@ -150,12 +150,15 @@ export class MenuComponent implements OnInit {
         this.lobbyList = true;
     }
 
+    chosenTank(pImgNr){
+        this.imgNr = pImgNr;
+    }
+
     startMatch() {
         if(this.checkIfAPlayerNotReady())
             return;
-        let imgNR = 0;
-        let tankBodyImage = this.imagesService.getImages().tankBodies[imgNR];
-        this.socketioService.emit('startGame', {lobbyId: this.lobby.lobbyHostId, playerImgData: { imgNR: imgNR, width:tankBodyImage.width, height:tankBodyImage.height } });
+        let tankBodyImage = this.imagesService.getImages().tankBodies[this.imgNr];
+        this.socketioService.emit('startGame', {lobbyId: this.lobby.lobbyHostId, playerImgData: { imgNR: this.imgNr, width:tankBodyImage.width, height:tankBodyImage.height } });
     }
 
     // Iterates through the players and returns true, if someone's not ready

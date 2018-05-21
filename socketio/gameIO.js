@@ -19,6 +19,8 @@ io.on('connection', (socket) => {
         // Create a tank for each player
         for(let playerKey in lobbies[gameLobbyId].lobbyPlayers){
             socketHashMapList[playerKey].join(gameLobbyId);
+            socketHashMapList[playerKey].mobile = false;
+            socketHashMapList[playerKey].code = 999;
             Tank.onConnect(socketHashMapList[playerKey], playerImgData, gameLobbyId);
         }
 
@@ -44,10 +46,48 @@ io.on('connection', (socket) => {
         // }
 
         socket.emit("lobbyHost",{lobbyHostId: gameLobbyId});
-		//socket.code = data;
-		//socket.mobile = false;
 		console.log("StartGame");
 	});
+
+    socket.on('code', function(data){
+        for(var i in socketHashMapList){
+            var currentSocket = socketHashMapList[i];
+            if(currentSocket.code == data.code && currentSocket.mobile == false) {
+
+                var curPlayer = Tank.list[currentSocket.id];
+                var stateValue;
+
+                if(data.state == "true"){
+                    stateValue = true;
+                }else{
+                    stateValue = false;
+                }
+
+                switch(data.inputId) {
+                    case "up":
+                        curPlayer.pressingUp = stateValue;
+                        break;
+                    case "down":
+                        curPlayer.pressingDown = stateValue;
+                        break;
+                    case "left":
+                        curPlayer.pressingLeft = stateValue;
+                        break;
+                    case "right":
+                        curPlayer.pressingRight = stateValue;
+                        break;
+                    case "attack":
+                        curPlayer.pressingAttack = stateValue;
+                        break;
+                    case "mouseAngle":
+                        curPlayer.mouseAngle = parseFloat(data.state);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    });
 
     socket.on('reset', function(resetData){
         let data = resetData.data;

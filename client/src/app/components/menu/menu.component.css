@@ -7,3 +7,109 @@
 table th, td {
     text-align: center;
 }
+
+.menu {
+    -moz-border-radius:20px 0 0 0;
+    -moz-box-shadow: 0 1px 0 #ad392d, inset 0 1px 0 white;
+    -webkit-border-radius:20px 0 0 0;
+    -webkit-box-shadow: 0 1px 0 #ad392d, inset 0 1px 0 white;
+    background: #ecf0f1;
+    background-color: #ecf0f1;
+    border-radius:20px 0 0 0;
+    box-shadow: 0 1px 0 #ad392d, inset 0 1px 0 white;
+    box-shadow: 20px 20px 20px;
+    margin: 5% auto;
+    padding: 10%;
+    padding-left: 15%;
+    padding-right: 15%;
+	position: relative;
+    text-align: center;
+}
+
+.demo-3 {
+    display: inline-block;
+    /*margin: 0px;
+    margin-left: 200px;*/
+    padding: 0;
+    vertical-align:middle;
+    /*width: 20%;
+    margin-left: 5%;*/
+}
+
+.demo-3 figure {
+    cursor:pointer;
+    margin: 0;
+    padding: 0;
+    position:relative;
+}
+.demo-3 figure img {
+    display:block;
+
+    margin-left: auto;
+    margin-right: auto;
+    position:relative;
+    z-index:10;
+}
+.demo-3 figure figcaption {
+    -moz-box-sizing:border-box;
+
+    -webkit-box-sizing:border-box;
+
+    border-radius: 10px;
+    box-sizing:border-box;
+    display:block;
+    height: 80%;
+    position:absolute;
+    text-align: center;
+
+    width: 100%;
+    z-index:5;
+}
+.demo-3 figure h2 {
+    color:#fff;
+    font-family:'Lato';
+    font-size:20px;
+    text-align: center
+}
+.demo-3 figure p {
+    color:#fff;
+    display:block;
+    font-family:'Lato';
+    font-size:12px;
+    line-height:18px;
+    margin:0;
+    text-align: center;
+}
+.demo-3 figure figcaption {
+    -moz-transform:rotateY(-180deg);
+    -moz-transition:all .5s;
+    -webkit-transform:rotateY(-180deg);
+    -webkit-transition:all .5s;
+    backface-visibility:hidden;
+
+    background-color:rgba(26,76,110,0.5);
+    left:0;
+
+    /*padding:50%;
+    padding-bottom: 100%;*/
+    text-align:center;
+    top:0;
+    transform:rotateY(-180deg);
+    transition:all .5s
+}
+.demo-3 figure img {
+    -moz-transition:all .5s;
+    -webkit-transition:all .5s;
+    backface-visibility:hidden;
+    transition:all .5s
+}
+.demo-3 figure:hover img,figure.hover img {
+    -moz-transform:rotateY(180deg);
+    -webkit-transform:rotateY(180deg);
+    transform:rotateY(180deg)
+}
+.demo-3 figure:hover figcaption,figure.hover figcaption {
+    -moz-transform:rotateY(0);
+    -webkit-transform:rotateY(0);
+    transform:rotateY(0)
+}

@@ -11,6 +11,8 @@ io.on('connection', (socket) => {
     console.log("A new socket connected: " + socket.id);
     socketHashMapList[socket.id] = socket;
 
+    socket.mobile = true;
+
     console.log("The socket ids:");
 	for(let socket in socketHashMapList){
 		console.log(socket);

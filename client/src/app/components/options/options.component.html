@@ -1,6 +1,6 @@
-<h2 class="page-header">Options</h2>
-<h5 class="page-header">Movement keys</h5>
-<form (submit)="onOptionSubmit()">
+<h2 class="page-header whiteFont">Options</h2>
+<h5 class="page-header whiteFont">Movement keys</h5>
+<form (submit)="onOptionSubmit()" class= "whiteFont">
     <div class="form-group">
         <label>Forward</label>
         <input type="text" [(ngModel)]="option.forwardKey" (keypress)="getKeyCode($event,'forwardCode')" name="forwardKey" class="form-control" maxlength="1" required>
