@@ -10,6 +10,7 @@ import { Observable } from "rxjs";
 
 import { Tank } from '../../models/tank';
 import { Bullet } from '../../models/bullet';
+import { Message } from '../../models/message';
 
 @Component({
   selector: 'app-game',
@@ -34,8 +35,11 @@ export class GameComponent implements OnInit {
 
     gameLoop: any;
 
-    gameTime: any;
-    curTime: number;
+    gameTime: number;
+
+    messages: Message[];
+    messageText: string;
+
     constructor(private flashMessage: FlashMessagesService,
       private router: Router,
       private authService: AuthService,
@@ -47,20 +51,28 @@ export class GameComponent implements OnInit {
     }
 
     ngOnDestroy() {
-      //console.log("DESTROY");
+      if(this.lobbyHostId != null && this.selfId != null){
+          this.socketioService.emit('leaveLobby',{hostId: this.lobbyHostId, playerId: this.selfId});
+      }
+
       this.gameLoop.unsubscribe();
       this.socketioService.removeEventListener('lobbyHost');
       this.socketioService.removeEventListener('update');
       this.socketioService.removeEventListener('initializeGame');
       this.socketioService.removeEventListener('remove');
       this.socketioService.removeEventListener('explosion');
+      this.socketioService.removeEventListener('gameOver');
+      this.socketioService.removeEventListener('updateMessagesList');
     }
 
     ngOnInit() {
       this.selfId = null;
       this.lobbyHostId = null;
+      this.messageText = null;
       this.tanksList = new Array();
       this.bulletsList = new Array();
+      this.messages = new Array();
+
       this.controllerButtons = this.authService.getOptionsFromLStorage();
 
       this.images = this.imagesService.getImages();
@@ -69,45 +81,7 @@ export class GameComponent implements OnInit {
       this.initializeGameListeners();
 
       var date = new Date(); // Generate a timestamp when you need to start countdown
-      //console.log(new Date().getTime() - date.getTime()); // When you need, subtract saved date from new one
 
-
-// //create a function to stop the time
-// function stopTime( ) { /* check if seconds, minutes and hours are not equal to 0 */
-// if ( seconds !== 0 || minutes !== 0 || hours !== 0 ) {
-//     /* display the full time before reseting the stop watch */
-//     var fulltime = document .getElementById( "fulltime" );
-//     //display the full time
-//     fulltime.style.display = "block";
-//     var time = gethours + mins + secs;
-//     fulltime.innerHTML = 'Fulltime: ' + time;
-//     // reset the stop watch
-//     seconds = 0;
-//     minutes = 0;
-//      hours = 0;
-//      secs = '0' + seconds; mins = '0' + minutes + ': '; gethours = '0' + hours + ': ';
-//      /* display the stopwatch after it's been stopped */
-//      var x = document.getElementById ("timer");
-//      var stopTime = gethours + mins + secs;
-//      x.innerHTML = stopTime;
-//      /* display all stop watch control buttons */
-//      var showStart = document.getElementById ('start');
-//      showStart.style.display = "inline-block";
-//      var showStop = document.getElementById ("stop");
-//      showStop.style.display = "inline-block"; /* clear the stop watch using the setTimeout( ) return value 'clearTime' as ID */
-//      clearTimeout( clearTime ); } //
-//      if () } //
-//      stopTime() /* you need to call the stopTime( ) function to terminate the stop watch */
-//      window.addEventListener( 'load', function ( ) { var stop = document.getElementById ("stop"); stop.addEventListener( 'click', stopTime ); });
-//      // stopwatch.js end
-
-
-
-
-
-
-     // this.gameTime = 10000;
-      this.gameTime = Observable.interval(1000).map(x => (this.curTime = new Date().getTime() - date.getTime())/1000).share();
       //start the gameloop
       this.startGameLoop();
     }
@@ -117,6 +91,11 @@ export class GameComponent implements OnInit {
         this.context.font = '30px Arial';
         this.canvasWidth = (<HTMLCanvasElement>this.mainCanvas.nativeElement).width;
         this.canvasHeight = (<HTMLCanvasElement>this.mainCanvas.nativeElement).height;
+
+
+        this.context.webkitImageSmoothingEnabled = false;
+        this.context.mozImageSmoothingEnabled = false;
+        this.context.imageSmoothingEnabled = false; //future
     }
 
     // drawMap(){
@@ -144,24 +123,44 @@ export class GameComponent implements OnInit {
         this.context.shadowColor = "rgba(0, 0, 0, 0)";
     };
 
-    drawScore(){
-        this.context.fillStyle = 'black';
-        this.context.fillText("Score: " + this.tanksList[this.selfId].score, 5, 30);
-    };
-
-    drawRemainingBullets(){
-        this.context.fillStyle = 'black';
-        this.context.fillText("Bullets: " + this.tanksList[this.selfId].curBullet, 5, 70);
-    };
-
-    drawReloading(){
-        this.context.fillStyle = 'black';
-        this.context.fillText("Reloading... ", 5, 110);
-    };
+    // drawScore(){
+    //     this.context.fillStyle = 'black';
+    //     this.context.fillText("Score: " + this.tanksList[this.selfId].score, 5, 30);
+    // };
+    //
+    // drawRemainingBullets(){
+    //     this.context.fillStyle = 'black';
+    //     this.context.fillText("Bullets: " + this.tanksList[this.selfId].curBullet, 5, 70);
+    // };
+    //
+    // drawReloading(){
+    //     this.context.fillStyle = 'black';
+    //     this.context.fillText("Reloading... ", 5, 110);
+    // };
 
     initializeGameListeners(){
+
+        this.socketioService.removeEventListener('gameTime');
+        this.socketioService.on('gameTime', (data) => {
+            this.gameTime = data;
+        });
+
+        this.socketioService.removeEventListener('kickLobbyPlayer');
+        this.socketioService.on('kickLobbyPlayer', (data) => {
+            console.log(data.msg);
+            this.flashMessage.show(data.msg, {cssClass: 'alert-danger', timeout: 3000});
+            this.router.navigate(['/menu']);
+        });
+
         this.socketioService.on('lobbyHost', (data) => {
             this.lobbyHostId = data.lobbyHostId;
+        });
+
+        this.socketioService.on('updateMessagesList', (data) => {
+            this.messages = new Array();
+            for(let i = 0; i < data.messages.length; i++){
+                this.messages.push(new Message(i, data.messages[i].user, data.messages[i].text));
+            }
         });
 
         this.socketioService.on('initializeGame', (data) => {
@@ -234,27 +233,38 @@ export class GameComponent implements OnInit {
             //explosion(data);
             this.socketioService.emit('reset', {data: data});
         });
+        this.socketioService.on('gameOver', (data) => {
+            console.log("GAME OVER");
+            //leave the gameloop
+            this.gameLoop.unsubscribe();
+            //let newScore = this.tanksList[this.selfId].score + this.authService.getUserScoreFromLStorage();
+            //console.log(this.tanksList[this.selfId].score);
+            //console.log(this.authService.getUserScoreFromLStorage());
+            let userData = {
+                newUserScore: this.tanksList[this.selfId].score,
+                username: this.authService.getUserNameFromLStorage()
+            };
+
+            this.authService.updateUserScore(userData).subscribe(data => {
+                if(data.success){
+                    this.flashMessage.show(data.msg, {cssClass: 'alert-success', timeout: 3000});
+                } else {
+                    this.flashMessage.show(data.msg, {cssClass: 'alert-danger', timeout: 3000});
+                }
+            });
+            this.router.navigate(['/menu']);
+        });
     }
 
     startGameLoop(){
         //Timer's first argument: after how much time should it started
         //Timer's second argument: after how much time should it repeat itself
         this.gameLoop = Observable.timer(0, environment.gameFps).subscribe(() => {
-            if(this.curTime > 100000){
-                console.log("GAME OVER");
-                this.gameLoop.unsubscribe();
-            }
             if(!this.selfId)
                 return;
-            //console.log("gameloop");
             this.context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 
     		this.drawCircle();
-    		this.drawScore();
-    		this.drawRemainingBullets();
-
-    		if(this.tanksList[this.selfId].reloading)
-    			this.drawReloading();
 
     		for(var i in this.tanksList){
     			this.tanksList[i].draw();
@@ -263,6 +273,13 @@ export class GameComponent implements OnInit {
     		for(var i in this.bulletsList)
     			this.bulletsList[i].draw();
         });
+    }
+
+    sendMessage(){
+        let userName = this.authService.getUserNameFromLStorage();
+        console.log("Message: " + this.messageText);
+        this.socketioService.emit('chatMessage', {user:userName, text:this.messageText});
+        this.messageText = "";
     }
 
     /////////////////////////////////////////////////////

@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
 
     ngOnInit() {
     }
-    
+
     onLoginSubmit(){
         const user = {
             username: this.username,
@@ -40,5 +40,13 @@ export class LoginComponent implements OnInit {
                 this.router.navigate(['/login']);
             }
         });
+    }
+
+    onRegisterClick(){
+        this.router.navigate(['/register']);
+    }
+
+    onBackClick(){
+        this.router.navigate(['/']);
     }
 }

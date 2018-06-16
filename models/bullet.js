@@ -1,6 +1,6 @@
 const Entity = require('./entity');
 
-var socketHashMapList = require('../socketio/lobbyIO').socketHashMapList;
+//var socketHashMapList = require('../socketio/lobbyIO').socketHashMapList;
 
 var initPackBulletList = [[]];
 var removePackBulletList = [[]];
@@ -21,28 +21,26 @@ var Bullet = function(parent, angle, damage, gameLobbyId){
 
 	var super_update = self.update;
 
-	self.update = function(){
-        const Tank = require('./tank');
-
+	self.update = function(lobbyKey, tanks, socketHashMapList){
 		if(self.timer++ > 100)
 			self.toRemove = true;
 		super_update();
 
-		for(var i in Tank.list){
-			var p = Tank.list[i];
+		for(let i in tanks){
+			if(tanks[i].gameLobbyId == lobbyKey){
+				let p = tanks[i];
 
-			if(p.collides(p, self) && self.parent !== p.id && self.gameLobbyId == p.gameLobbyId){
-				p.hp -= damage;
-				if(p.hp <= 0){
-					var shooter = Tank.list[self.parent];
-					if(shooter){
-						shooter.score += 1;
+				if(p.collides(p, self) && self.parent !== p.id && self.gameLobbyId == p.gameLobbyId){
+					p.hp -= damage;
+					if(p.hp <= 0){
+						let shooter = tanks[self.parent];
+						if(shooter){
+							shooter.score += 1;
+						}
+						socketHashMapList[p.id].emit('explosion', p);
 					}
-					for(i in socketHashMapList){
-						socketHashMapList[i].emit('explosion', p);
-					}
+					self.toRemove = true;
 				}
-				self.toRemove = true;
 			}
 		}
 	};
@@ -70,12 +68,12 @@ var Bullet = function(parent, angle, damage, gameLobbyId){
 };
 
 Bullet.list = {};
-Bullet.update = function(lobbyKey) {
+Bullet.update = function(lobbyKey, tanks, socketHashMapList) {
 	var pack = [];
 	for(var i in Bullet.list){
 		if(Bullet.list[i].gameLobbyId == lobbyKey){
 			var bullet = Bullet.list[i];
-			bullet.update();
+			bullet.update(lobbyKey, tanks, socketHashMapList);
 
 			if(bullet.toRemove){
 				removePackBulletList[Bullet.list[i].gameLobbyId].push(bullet.id);

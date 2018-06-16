@@ -1,7 +1,7 @@
-var Entity = function() {
+var Entity = function(posX = 250, posY = 250) {
 	var self = {
-		x:250,
-		y:250,
+		x:posX,
+		y:posY,
 		spdX:0,
 		spdY:0,
 		id:"",

@@ -32,16 +32,19 @@ export class MenuComponent implements OnInit {
     ) { }
 
     initializeLocalVariables(){
-        this.lobby = new Lobby("","",null,null,"-",null,null);
+        this.lobby = new Lobby("","",1,2,"",1,false);
         this.lobbies = new Array();
 
         this.player = new Player("","","",null);
         this.players = new Array();
+
+        this.imgNr = 0;
     }
 
     ngOnInit() {
         this.initializeLocalVariables();
         this.socketioService.emit('getLobbies',{});
+        this.socketioService.removeEventListener('updateLobbiesList');
         this.socketioService.on('updateLobbiesList', (data) => {
             console.log("UpdateLobbiesList: ");
             this.updateLobbiesList(data.lobbies);
@@ -50,35 +53,60 @@ export class MenuComponent implements OnInit {
             console.log("UpdatePlayersList:");
             this.updatePlayersList(data.playersList);
         });
+        this.socketioService.removeEventListener('kickLobbyPlayer');
         this.socketioService.on('kickLobbyPlayer', (data) => {
             console.log(data.msg);
             this.lobbyList = true;
             this.flashMessage.show(data.msg, {cssClass: 'alert-danger', timeout: 3000});
         });
         this.socketioService.on('navigateToCanvas', (data) => {
+            this.lobby.lobbyInGame = true;
             this.router.navigate(['/game']);
             console.log("The match has been started!");
         });
+        this.initializeMenuListeners();
     }
 
     ngOnDestroy() {
+        if(!this.lobby.lobbyInGame){
+            this.onLeaveClick(this.player.playerId, this.player.playerLobbyHostId);
+        }
+
         this.socketioService.removeEventListener('navigateToCanvas');
         this.socketioService.removeEventListener('updateLobbiesList');
         this.socketioService.removeEventListener('updatePlayersList');
-        this.socketioService.removeEventListener('kickLobbyPlayer');
 
         this.socketioService.removeEventListener('joinSuccess');
         this.socketioService.removeEventListener('joinUnSuccess');
         this.socketioService.removeEventListener('joinLobby');
     }
 
-    onLobbySubmit(){
-        // We add the lobbyHostId here, the rest is filled by the form
-        this.lobby.lobbyHostId = this.socketioService.getId();
+    initializeMenuListeners(){
+        this.socketioService.removeEventListener('joinSuccess');
+        this.socketioService.removeEventListener('joinUnSuccess');
+        this.socketioService.on('joinSuccess', (data) => {
+            console.log("Player joined successfully:");
+            this.lobbyList = false;
+            this.flashMessage.show('You joined the lobby!', {cssClass: 'alert-success', timeout: 3000});
+        });
+        this.socketioService.on('joinUnSuccess', (data) => {
+            this.flashMessage.show('The lobby is full!', {cssClass: 'alert-danger', timeout: 3000});
+        });
+    }
 
-        // Send the new lobby and close the modal
-        this.socketioService.emit('createLobby', {lobby: this.lobby});
-        this.flashMessage.show('The lobby has been created!', {cssClass: 'alert-success', timeout: 3000});
+    onLobbySubmit(){
+        if(this.lobby.lobbyName && this.lobby.lobbyMap && this.lobby.lobbyMaxPlayer && this.lobby.lobbyCurPlayer){
+            // We add the lobbyHostId here, the rest is filled by the form
+            this.lobby.lobbyHostId = this.socketioService.getId();
+            this.player = new Player(this.lobby.lobbyHostId, this.lobby.lobbyHostId, this.authService.getUserNameFromLStorage(), false);
+            // Send the new lobby and close the modal
+            this.socketioService.emit('createLobby', {lobby: this.lobby, newPlayer: this.player});
+            this.flashMessage.show('The lobby has been created!', {cssClass: 'alert-success', timeout: 3000});
+
+            //this.lobby = new Lobby("","",1,2,"",1,false);
+        } else {
+            this.flashMessage.show('All of the required fields must be filled!', {cssClass: 'alert-danger', timeout: 3000});
+        }
     }
 
     updateLobbiesList(lobbiesList){
@@ -108,6 +136,7 @@ export class MenuComponent implements OnInit {
             this.joinLobby(pHostId);
         }
         else{
+            this.lobbyPass = "";
             console.log("Player faild to join: bad password!");
             this.flashMessage.show('The lobby password is incorrect!', {cssClass: 'alert-danger', timeout: 3000});
         }
@@ -125,15 +154,6 @@ export class MenuComponent implements OnInit {
     joinLobby(pHostId){
         this.player = new Player(pHostId, this.socketioService.getId(), this.authService.getUserNameFromLStorage(), false);
         this.socketioService.emit('joinLobby', {newPlayer: this.player});
-        this.socketioService.on('joinSuccess', (data) => {
-            console.log("Player joined successfully:");
-            this.lobbyList = false;
-            this.flashMessage.show('You joined the lobby!', {cssClass: 'alert-success', timeout: 3000});
-        });
-        this.socketioService.on('joinUnSuccess', (data) => {
-
-            this.flashMessage.show('The lobby is full!', {cssClass: 'alert-danger', timeout: 3000});
-        });
     }
 
     onPlayerReadyClick(playerId, hostId, playerStatus){
@@ -142,6 +162,10 @@ export class MenuComponent implements OnInit {
         } else {
             this.socketioService.emit('playerReady', {hostId: hostId, playerId: playerId, playerState: true});
         }
+    }
+
+    onPlayerKickClick(playerId, hostId){
+        this.socketioService.emit('playerKick', {hostId: hostId, playerId: playerId});
     }
 
     onLeaveClick(playerId, hostId){
@@ -155,10 +179,14 @@ export class MenuComponent implements OnInit {
     }
 
     startMatch() {
-        if(this.checkIfAPlayerNotReady())
+        if(this.checkIfAPlayerNotReady()){
+            this.flashMessage.show('Not all of the players are ready!', {cssClass: 'alert-danger', timeout: 3000});
             return;
+        }
+
         let tankBodyImage = this.imagesService.getImages().tankBodies[this.imgNr];
-        this.socketioService.emit('startGame', {lobbyId: this.lobby.lobbyHostId, playerImgData: { imgNR: this.imgNr, width:tankBodyImage.width, height:tankBodyImage.height } });
+        let options = this.authService.getOptionsFromLStorage();
+        this.socketioService.emit('startGame', {lobbyId: this.lobby.lobbyHostId, playerImgData: { imgNR: this.imgNr, width:tankBodyImage.width, height:tankBodyImage.height }, code: options.code });
     }
 
     // Iterates through the players and returns true, if someone's not ready

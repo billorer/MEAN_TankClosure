@@ -1,145 +1,166 @@
-<div class="jumbotron text-center">
-    <h1>Tank Closure</h1>
-    <p class="lead">Menu</p>
-</div>
-<div *ngIf="lobbyList" id="lobbyList">
-    <table class="table table-hover whiteFont">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Password</th>
-          <th scope="col">HostId</th>
-          <th scope="col">GameName</th>
-          <th scope="col">Players</th>
-          <th scope="col">GameMap</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let lobby of lobbies; let myIndex = index">
-          <td>{{myIndex}}</td>
-          <td><i *ngIf="lobby.lobbyPassword" class="fa fa-lock fa-lg"></i></td>
-          <td>{{lobby.lobbyHostId}}</td>
-          <td>{{lobby.lobbyName}}</td>
-          <td>{{lobby.lobbyCurMaxPlayers}}</td>
-          <td>{{lobby.lobbyMap}}</td>
-          <td>
-              <button *ngIf="!lobby.showPassForm" type="button" (click)="onJoinLobbyClick(lobby.lobbyHostId, lobby.lobbyPassword, myIndex)" class="btn btn-success">Join</button>
-              <form *ngIf="lobby.showPassForm" class="form-inline">
-                  <div class="form-group">
-                      <input [(ngModel)]="lobbyPass" name="lobbyPass" type="password" placeholder="Enter password" class="form-control">
-                  </div>
-                  <input type="submit" class="btn btn-primary" value="Join" (click)="onJoinSubmit(lobby.lobbyHostId, lobby.lobbyPassword, myIndex)">
-              </form>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <ul class="list-group">
-        <button type="button" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#lobbyCreateModal">Create lobby</button>
-        <button type="button" (click)="onBackClick()" class="list-group-item list-group-item-action">Back</button>
-    </ul>
-</div>
-<div *ngIf="!lobbyList" id="currentLobby">
-    <div class="container">
-        <table class="table table-hover whiteFont">
+<div class="menu">
+    <div class="jumbotron text-center">
+        <h1>Tank Closure</h1>
+        <p class="lead">Menu</p>
+    </div>
+    <div *ngIf="lobbyList" id="lobbyList">
+        <table class="table table-hover table-responsive">
           <thead>
             <tr>
               <th scope="col">#</th>
-              <th scope="col">PlayerName</th>
-              <th scope="col">PlayerStatus</th>
+              <th scope="col">HostId</th>
+              <th scope="col">GameName</th>
+              <th scope="col">Players</th>
+              <th scope="col">GameMap</th>
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let curPlayer of players; let myIndex = index">
-              <th scope="row">{{myIndex}}</th>
-              <td>{{curPlayer.playerName}}</td>
-              <td>{{curPlayer.playerStatus}}</td>
+            <tr *ngFor="let lobby of lobbies; let myIndex = index">
+              <td>{{myIndex}} <i *ngIf="lobby.lobbyPassword" class="fa fa-lock fa-lg"></i></td>
+              <td>{{lobby.lobbyHostId}}</td>
+              <td>{{lobby.lobbyName}}</td>
+              <td>{{lobby.lobbyCurMaxPlayers}}</td>
+              <td>{{lobby.lobbyMap}}</td>
               <td>
-                  <button *ngIf="player.playerId==curPlayer.playerId" type="button" (click)="onPlayerReadyClick(curPlayer.playerId, curPlayer.playerLobbyHostId, curPlayer.playerStatus)" class="btn btn-success">{{curPlayer.playerStatus ? "Unready" : "Ready"}}</button>
+                  <button *ngIf="!lobby.showPassForm" type="button" (click)="onJoinLobbyClick(lobby.lobbyHostId, lobby.lobbyPassword, myIndex)" class="btn btn-success">Join</button>
+                  <form *ngIf="lobby.showPassForm" class="form-inline">
+                      <div class="form-group">
+                          <input [(ngModel)]="lobbyPass" name="lobbyPass" type="password" placeholder="Enter password" class="form-control">
+                      </div>
+                      <input type="submit" class="btn btn-primary" value="Join" (click)="onJoinSubmit(lobby.lobbyHostId, lobby.lobbyPassword, myIndex)">
+                  </form>
               </td>
             </tr>
           </tbody>
         </table>
-        <div #chooseTankDiv class="menu">
-            <div class="row">
-                <div class="demo-3 col-md-4">
-                    <figure (click)="chosenTank(0);">
-                        <img class="img-responsive" src='../assets/img/tanks/tank1.png' alt='tank1Image'/>
-                        <figcaption>
-                            <h2>Green Grass!</h2>
-                            <p>Has a great health and damage rate!</p>
-                        </figcaption>
-                    </figure>
-                </div>
-                <div class="demo-3 col-md-4">
-                    <figure (click)="chosenTank(1);">
-                        <img class="img-responsive" src='../assets/img/tanks/tank2.png' alt='tank2Image'/>
-                        <figcaption>
-                            <h2>Green Grass!</h2>
-                            <p>Has a great health and damage rate!</p>
-                        </figcaption>
-                    </figure>
-                </div>
-                <div class="demo-3 col-md-4">
-                    <figure (click)="chosenTank(2);">
-                        <img class="img-responsive" src='../assets/img/tanks/tank3.png' alt='tank3Image'/>
-                        <figcaption>
-                            <h2>Green Grass!</h2>
-                            <p>Has a great health and damage rate!</p>
-                        </figcaption>
-                    </figure>
+        <ul class="list-group">
+            <button type="button" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#lobbyCreateModal">Create lobby</button>
+            <button type="button" (click)="onBackClick()" class="list-group-item list-group-item-action">Back</button>
+        </ul>
+    </div>
+    <div *ngIf="!lobbyList" id="currentLobby">
+        <div class="row">
+            <div class="tableSection col-md-4">
+                <h3>LobbyPlayers</h3>
+                <table class="table table-hover ">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">PlayerName</th>
+                      <th scope="col">PlayerStatus</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let curPlayer of players; let myIndex = index">
+                      <th scope="row">{{myIndex}}</th>
+                      <td>{{curPlayer.playerName}}</td>
+                      <td>{{curPlayer.playerStatus}}</td>
+                      <td>
+                          <button *ngIf="player.playerId==curPlayer.playerId" type="button" (click)="onPlayerReadyClick(curPlayer.playerId, curPlayer.playerLobbyHostId, curPlayer.playerStatus)" class="btn">{{curPlayer.playerStatus ? "Unready" : "Ready"}}</button>
+                          <button *ngIf="player.playerId==player.playerLobbyHostId && player.playerId!=curPlayer.playerId" type="button" (click)="onPlayerKickClick(curPlayer.playerId, curPlayer.playerLobbyHostId)" class="btn">Kick</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+            <div class="tankSection offset-md-2 col-md-6">
+                <h3>Choose your tank</h3>
+                <div class="row">
+                    <div class="demo-3 col-sm-4" >
+                        <figure (click)="chosenTank(0);">
+                            <img [ngClass]="(imgNr=='0')?'tankSelected':'tankUnSelected'" class="img-responsive" src='../assets/img/tanks/tank1.png' alt='tank1Image'/>
+                            <figcaption>
+                                <h2>Green Grass!</h2>
+                                <p>Has a great health and damage rate!</p>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="demo-3 col-sm-4">
+                        <figure (click)="chosenTank(1);">
+                            <img [ngClass]="(imgNr=='1')?'tankSelected':'tankUnSelected'" class="img-responsive" src='../assets/img/tanks/tank2.png' alt='tank2Image'/>
+                            <figcaption>
+                                <h2>Blue water!</h2>
+                                <p>It's very fast and agile, his health is low!</p>
+                            </figcaption>
+                        </figure>
+                    </div>
+                    <div class="demo-3 col-sm-4">
+                        <figure (click)="chosenTank(2);">
+                            <img [ngClass]="(imgNr=='2')?'tankSelected':'tankUnSelected'" class="img-responsive" src='../assets/img/tanks/tank3.png' alt='tank3Image'/>
+                            <figcaption>
+                                <h2>Red berry!</h2>
+                                <p>Has a great damage rate, though it's slow!</p>
+                            </figcaption>
+                        </figure>
+                    </div>
                 </div>
             </div>
         </div>
+        <ul class="list-group">
+            <button *ngIf="player.playerId==player.playerLobbyHostId" type="button" (click)="startMatch()" class="list-group-item list-group-item-action" >Start match</button>
+            <button type="button" (click)="onLeaveClick(player.playerId, player.playerLobbyHostId)" class="list-group-item list-group-item-action">Leave</button>
+        </ul>
     </div>
-    <ul class="list-group">
-        <button *ngIf="player.playerId==player.playerLobbyHostId" type="button" (click)="startMatch()" class="list-group-item list-group-item-action" >Start match</button>
-        <button type="button" (click)="onLeaveClick(player.playerId, player.playerLobbyHostId)" class="list-group-item list-group-item-action">Leave</button>
-    </ul>
-</div>
-<!-- Create lobby Modal -->
-<div class="modal fade" id="lobbyCreateModal" role="dialog">
-    <div class="modal-dialog">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Create Lobby</h4>
+    <!-- Create lobby Modal -->
+    <div class="modal fade" id="lobbyCreateModal" role="dialog">
+        <div class="modal-dialog">
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Create Lobby</h4>
+            </div>
+            <div class="modal-body">
+                <form (submit)="onLobbySubmit();" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Lobby Name</label>
+                        <div class="col-sm-8">
+                            <input type="text" [(ngModel)]="lobby.lobbyName" name="lobbyName" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Lobby Password</label>
+                        <div class="col-sm-8">
+                            <input type="password" [(ngModel)]="lobby.lobbyPassword" name="lobbyPassword" placeholder="Optional" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Max player number</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" [(ngModel)]="lobby.lobbyMaxPlayer" name="lobbyMaxPlayer" required>
+                              <option selected>2</option>
+                              <option>4</option>
+                              <option>6</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Map</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" [(ngModel)]="lobby.lobbyMap" name="lobbyMap" required>
+                              <option selected>1</option>
+                              <!-- <option>2</option>
+                              <option>3</option> -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-0 col-sm-12">
+                            <input type="submit" class="btn" value="Create">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <ul class="formlink">
+                    <li>
+                        <a data-dismiss="modal">Close</a>
+                    </li>
+                </ul>
+            </div>
+          </div>
         </div>
-        <div class="modal-body">
-            <form (submit)="onLobbySubmit();">
-                <div class="form-group">
-                    <label>Lobby Name</label>
-                    <input type="text" [(ngModel)]="lobby.lobbyName" name="lobbyName" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label>Lobby Password</label>
-                    <input type="password" [(ngModel)]="lobby.lobbyPassword" name="lobbyPassword" placeholder="Optional" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label>Max player number</label>
-                    <select class="form-control" [(ngModel)]="lobby.lobbyMaxPlayer" name="lobbyMaxPlayer">
-                      <option>2</option>
-                      <option>4</option>
-                      <option>6</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Map</label>
-                    <select class="form-control" [(ngModel)]="lobby.lobbyMap" name="lobbyMap">
-                      <option>1</option>
-                      <option>2</option>
-                      <option>3</option>
-                    </select>
-                </div>
-                <input type="submit" class="btn btn-primary" value="Create">
-            </form>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-default closeButton" data-dismiss="modal">Close</button>
-        </div>
-      </div>
     </div>
 </div>

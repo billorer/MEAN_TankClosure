@@ -1,29 +1,50 @@
-<h2 class="page-header whiteFont">Options</h2>
-<h5 class="page-header whiteFont">Movement keys</h5>
-<form (submit)="onOptionSubmit()" class= "whiteFont">
-    <div class="form-group">
-        <label>Forward</label>
-        <input type="text" [(ngModel)]="option.forwardKey" (keypress)="getKeyCode($event,'forwardCode')" name="forwardKey" class="form-control" maxlength="1" required>
-    </div>
-    <div class="form-group">
-        <label>Backward</label>
-        <input type="text" [(ngModel)]="option.backwardKey" (keypress)="getKeyCode($event,'backwardCode')" name="backwardKey" class="form-control" maxlength="1" required>
-    </div>
-    <div class="form-group">
-        <label>Left</label>
-        <input type="text" [(ngModel)]="option.leftKey" (keypress)="getKeyCode($event,'leftCode')" name="leftKey" class="form-control" maxlength="1" required>
-    </div>
-    <div class="form-group">
-        <label>Right</label>
-        <input type="text" [(ngModel)]="option.rightKey" (keypress)="getKeyCode($event,'rightCode')" name="rightKey" class="form-control" maxlength="1" required>
-    </div>
-    <!-- <div class="form-group">
-        <label>Attack</label>
-        <input type="text" [(ngModel)]="option.attackKey" (keypress)="getKeyCode($event,'attackCode')" (click)="getMouseCode(obj, $event)" name="attackKey" class="form-control" maxlength="1" required>
-    </div> -->
-    <input type="submit" class="btn btn-primary" value="Save">
-</form>
-<ul class="list-group">
-    <button type="button" (click)="onBackClick()" class="list-group-item list-group-item-action">Back</button>
-</ul>
-<!--[(ngModel)]="option.attackKey"-->
+<div class="menu">
+    <h2 class="page-header">Options</h2>
+    <h5 class="page-header">Movement keys</h5>
+    <form (submit)="onOptionSubmit()" class= "form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-sm-4">Forward</label>
+            <div class="col-sm-8">
+                <input type="text" [(ngModel)]="option.forwardKey" (keypress)="getKeyCode($event,'forwardCode')" name="forwardKey" class="form-control" maxlength="1" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">Backward</label>
+            <div class="col-sm-8">
+                <input type="text" [(ngModel)]="option.backwardKey" (keypress)="getKeyCode($event,'backwardCode')" name="backwardKey" class="form-control" maxlength="1" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">Left</label>
+            <div class="col-sm-8">
+                <input type="text" [(ngModel)]="option.leftKey" (keypress)="getKeyCode($event,'leftCode')" name="leftKey" class="form-control" maxlength="1" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">Right</label>
+            <div class="col-sm-8">
+                <input type="text" [(ngModel)]="option.rightKey" (keypress)="getKeyCode($event,'rightCode')" name="rightKey" class="form-control" maxlength="1" required>
+            </div>
+        </div>
+        <!-- <div class="form-group">
+            <label>Attack</label>
+            <input type="text" [(ngModel)]="option.attackKey" (keypress)="getKeyCode($event,'attackCode')" (click)="getMouseCode(obj, $event)" name="attackKey" class="form-control" maxlength="1" required>
+        </div> -->
+        <div class="form-group">
+            <label class="control-label col-sm-4">MobileCode</label>
+            <div class="col-sm-8">
+                <input type="number" [(ngModel)]="option.code" name="code" class="form-control" [min]="100" [max]="1000" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-0 col-sm-12">
+                <input type="submit" class="btn btn-primary" value="Save">
+            </div>
+        </div>
+    </form>
+    <ul class="formlink">
+        <li>
+            <a (click)="onBackClick()">Back</a>
+        </li>
+    </ul>
+</div>

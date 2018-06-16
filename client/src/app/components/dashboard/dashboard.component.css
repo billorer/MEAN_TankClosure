@@ -1,0 +1,22 @@
+.menu {
+    -moz-border-radius:20px 0 0 0;
+    -moz-box-shadow: 0 1px 0 #ad392d, inset 0 1px 0 white;
+    -webkit-border-radius:20px 0 0 0;
+    -webkit-box-shadow: 0 1px 0 #ad392d, inset 0 1px 0 white;
+    background: #ecf0f1;
+    border-radius:20px 0 0 0;
+    box-shadow: 0 1px 0 #ad392d, inset 0 1px 0 white;
+    box-shadow: 20px 20px 20px;
+    margin:10% auto;
+    padding: 5%;
+	position:relative;
+    text-align:center;
+}
+
+button {
+    background: #3498db;
+    color: #fff;
+    width: 50%;
+    margin: 0 auto;
+    text-align: center;
+}

@@ -17,7 +17,8 @@ router.post('/register', (req, res, next) => {
         last_name: req.body.last_name,
         email: req.body.email,
         username: req.body.username,
-        password: req.body.password
+        password: req.body.password,
+        score: 0 //by default
     });
 
     // We check if the username alreay exists
@@ -79,7 +80,8 @@ router.post('/authenticate', (req, res, next) => {
                             first_name: user.first_name,
                             last_name: user.last_name,
                             username: user.username,
-                            email: user.email
+                            email: user.email,
+                            //score: user.score
                         },
                         options: option
                     });
@@ -89,6 +91,28 @@ router.post('/authenticate', (req, res, next) => {
             }
         });
     });
+});
+
+router.put('/updateScore', (req, res, next) => {
+    const newUserScore = req.body.newUserScore;
+    const username = req.body.username;
+    console.log("UpdateScore: " + newUserScore + " " + username);
+    User.getUserByUsername(username, (getUserError, curUser) => {
+        if(getUserError) throw getUserError;
+        if(!curUser){
+            return res.json({success: false, msg: 'Game over, the points cannot be saved!'});
+        }
+        let newScore = newUserScore + curUser.score;
+        User.updateUserScore(username, newScore, (err, user) => {
+            if(err) throw err;
+            if(!user){
+                return res.json({success: false, msg: 'Game over, the points cannot be saved!'});
+            }
+            return res.json({success: true, msg: 'Game over, the points have been saved!'});
+        });
+        //return res.json({success: true, msg: 'Game over, the points have been saved!'});
+    });
+
 });
 
 // Profile

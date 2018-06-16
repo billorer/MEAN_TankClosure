@@ -11,6 +11,7 @@ function Lobby(lobbyHostId, lobbyName, lobbyPassword, lobbyMap,
         this.curMaxPlayer();
         this.lobbyPlayers = {};
         this.lobbyInGame = false;
+        this.lobbyGameTime = null;
 }
 
 Lobby.prototype.curMaxPlayer = function() {

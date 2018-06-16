@@ -5,13 +5,14 @@ export class Option {
     leftKey: string;
     rightKey: string;
     attackKey: string;
+    code: number;
     userId: string;
 
     constructor(//private pId:string,
         private pForwardKey:string,
         private pBackwardKey:string,private pLeftKey:string,
         private pRightKey:string,private pAttackKey:string,
-        private pUserId:string,
+        private pCode:number,private pUserId:string
     ){
     ///    this._id = pId;
         this.forwardKey = pForwardKey;
@@ -19,6 +20,7 @@ export class Option {
         this.leftKey = pLeftKey;
         this.rightKey = pRightKey;
         this.attackKey = pAttackKey;
+        this.code = pCode;
         this.userId = pUserId;
     }
 }

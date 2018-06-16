@@ -30,6 +30,12 @@ export class AuthService {
       return this.http.put(environment.api_url+'/option/saveOptions', option, {headers:headers}).map(res => res.json());
   }
 
+  updateUserScore(userData){
+      let headers = new Headers();
+      headers.append('Content-Type','application/json');
+      return this.http.put(environment.api_url+'/user/updateScore', userData, {headers:headers}).map(res => res.json());
+  }
+
   getOption(userId){
       let headers = new Headers();
       this.loadToken();
@@ -69,6 +75,10 @@ export class AuthService {
 
   getUserNameFromLStorage(){
       return JSON.parse(localStorage.getItem('user')).username;
+  }
+
+  getUserScoreFromLStorage(){
+      return JSON.parse(localStorage.getItem('user')).score;
   }
 
   getOptionsFromLStorage(){

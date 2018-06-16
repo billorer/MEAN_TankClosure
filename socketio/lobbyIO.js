@@ -1,6 +1,7 @@
 var io = require('../server');
 const Lobby = require('../models/lobby');
 const Player = require('../models/player');
+const Tank = require('../models/tank');
 
 var lobbies = {};
 var socketHashMapList = {};
@@ -25,6 +26,12 @@ io.on('connection', (socket) => {
             curLobby.lobbyPassword, curLobby.lobbyMap, curLobby.lobbyMaxPlayer,
             curLobby.lobbyCurPlayer);
         console.log("A lobby has been created: " + curLobby.lobbyHostId);
+        console.log("Player: " + socket.id + " joined to lobby: " + curLobby.lobbyHostId);
+        addPlayerToLobby(curLobby.lobbyHostId, data.newPlayer);
+        console.log("Sending players and lobbies list to the clients!");
+        sendPlayersListToClients(curLobby.lobbyHostId);
+        socket.emit('joinSuccess', {});
+        // Send the players list to the sockets in the same lobby
         io.emit('updateLobbiesList', {lobbies: lobbies});
     });
 
@@ -71,13 +78,30 @@ io.on('connection', (socket) => {
 
         console.log("Player: " + playerId + " left lobby: " + hostId);
 
-        if(playerId === hostId){
+        if(playerId === hostId && lobbies[hostId] != null){
+
             console.log("Deleting lobby: " + hostId);
             deleteLobby(hostId);
-        }else{
+            //io.to(gameLobbyId).emit('kickLobbyPlayer', {msg: "The lobby has been deleted!"});
+        }else if(lobbies[hostId] != null){
+            console.log("Deleting lobbyPlayer: " + playerId);
             deleteLobbyPlayer(hostId, playerId);
+            Tank.onDisconnect(socketHashMapList[playerId]);
+            //socket.emit('kickLobbyPlayer', {msg: "You have left the lobby!"});
             sendPlayersListToClients(hostId);
         }
+
+        io.emit('updateLobbiesList', {lobbies: lobbies});
+    });
+
+    socket.on('playerKick', (data) => {
+        let hostId = data.hostId;
+        let playerId = data.playerId;
+
+        socketHashMapList[playerId].emit('kickLobbyPlayer', {msg: "You have been kicked from the lobby!"});
+        deleteLobbyPlayer(hostId, playerId);
+        sendPlayersListToClients(hostId);
+        //update the lobby list on the client side
         io.emit('updateLobbiesList', {lobbies: lobbies});
     });
 

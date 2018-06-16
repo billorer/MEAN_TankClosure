@@ -1,10 +1,45 @@
-.whiteFont {
-    color: #FFF;
-}
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
-  background-color: #006eff;
+  background-color: #3498db;
+  color: #fff;
 }
+
+.table-hover tbody tr:hover td button {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+}
+
 table th, td {
+    text-align: center;
+}
+
+.tableSection {
+    text-align: center;
+}
+
+.tankSection {
+    float:right;
+}
+
+button {
+    background: #3498db;
+    color: #fff;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.list-group {
+    margin-top: 75px;
+}
+
+.list-group button {
+    width: 50%;
+}
+.close {
+    position: relative;
+    width: 5%;
+}
+
+.modal-title {
     text-align: center;
 }
 
@@ -28,20 +63,20 @@ table th, td {
 
 .demo-3 {
     display: inline-block;
-    /*margin: 0px;
-    margin-left: 200px;*/
     padding: 0;
     vertical-align:middle;
-    /*width: 20%;
-    margin-left: 5%;*/
 }
 
 .demo-3 figure {
     cursor:pointer;
     margin: 0;
-    padding: 0;
+    padding: 5px;
     position:relative;
+
+    /* width:65%;
+    height: auto; */
 }
+
 .demo-3 figure img {
     display:block;
 
@@ -49,16 +84,29 @@ table th, td {
     margin-right: auto;
     position:relative;
     z-index:10;
+
+    padding: 10px;
+    box-shadow: 8px 8px 10px #aaa;
+
+    width: 75px;
+    height: 120px;
 }
+
+.tankUnSelected {
+    border: 5px solid #b9bebf;
+}
+
+.tankSelected {
+    border: 5px solid #3498db;
+}
+
 .demo-3 figure figcaption {
     -moz-box-sizing:border-box;
-
     -webkit-box-sizing:border-box;
-
     border-radius: 10px;
     box-sizing:border-box;
     display:block;
-    height: 80%;
+    height: 100%;
     position:absolute;
     text-align: center;
 
@@ -76,7 +124,7 @@ table th, td {
     display:block;
     font-family:'Lato';
     font-size:12px;
-    line-height:18px;
+    line-height:1.6;
     margin:0;
     text-align: center;
 }
@@ -112,4 +160,30 @@ table th, td {
     -moz-transform:rotateY(0);
     -webkit-transform:rotateY(0);
     transform:rotateY(0)
+}
+
+.formlink a, .formlink a:visited {
+    -moz-transition: all .3s ease-in-out;
+    -webkit-transition: all .3s ease-in-out;
+    color: #7f8c8d;
+    font-weight:400;
+    text-decoration:none;
+    text-shadow:1px 1px 0 white;
+    transition: all .3s ease-in-out;
+}
+
+.formlink a:hover {
+    cursor: pointer;
+}
+
+.formlink li {
+    bottom:5%;
+    list-style:none;
+    position:relative;
+    right:5%;
+}
+
+input[type="submit"] {
+    background: #3498db;
+    color: #fff;
 }

@@ -6,8 +6,8 @@ var removePackPlayerList = [[]];
 
 const TO_RADIANS = Math.PI/180;
 
-var Tank = function(id, gameLobbyId){
-	var self = Entity();
+var Tank = function(id, gameLobbyId, x, y){
+	var self = Entity(x, y);
 	self.id = id;
 	self.number = "" + Math.floor(10 * Math.random());
 
@@ -186,8 +186,8 @@ var Tank = function(id, gameLobbyId){
 };
 
 Tank.list = {};
-Tank.onConnect = function(socket, playerImgData, gameLobbyId){
-	var player = Tank(socket.id, gameLobbyId);
+Tank.onConnect = function(socket, playerImgData, gameLobbyId, tankX, tankY){
+	var player = Tank(socket.id, gameLobbyId, tankX, tankY);
 
 	console.log("New Player's controllerCode: " + socket.code);
 

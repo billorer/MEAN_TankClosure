@@ -6,22 +6,37 @@ var socketHashMapList = require('./lobbyIO').socketHashMapList;
 const Tank = require('../models/tank');
 const Bullet = require('../models/bullet');
 
+var messages = [];
+
 io.on('connection', (socket) => {
     socket.on('startGame', function(data){
-
         let gameLobbyId = data.lobbyId;
         let playerImgData = data.playerImgData;
+        let mobileCode = data.code;
+
         // The game will start in this lobby, therefore it should not be visible in the menu
         lobbies[gameLobbyId].lobbyInGame = true;
         io.emit('updateLobbiesList', {lobbies: lobbies});
 
+        gameTimeCounter(gameLobbyId);
+
+        var tankIndex = 0;
         // Iterate through the players in the lobby and join them to a room
         // Create a tank for each player
         for(let playerKey in lobbies[gameLobbyId].lobbyPlayers){
             socketHashMapList[playerKey].join(gameLobbyId);
             socketHashMapList[playerKey].mobile = false;
-            socketHashMapList[playerKey].code = 999;
-            Tank.onConnect(socketHashMapList[playerKey], playerImgData, gameLobbyId);
+            socketHashMapList[playerKey].code = mobileCode;
+
+            let tankX, tankY = 0;
+            switch(tankIndex){
+                case 0: tankX = 150; tankY = 150; break;
+                case 1: tankX = 550; tankY = 150; break;
+                case 2: tankX = 550; tankY = 550; break;
+                case 3: tankX = 150; tankY = 550; break;
+            }
+            tankIndex++;
+            Tank.onConnect(socketHashMapList[playerKey], playerImgData, gameLobbyId, tankX, tankY);
         }
 
         io.to(gameLobbyId).emit('navigateToCanvas');
@@ -45,7 +60,7 @@ io.on('connection', (socket) => {
         //
         // }
 
-        socket.emit("lobbyHost",{lobbyHostId: gameLobbyId});
+        io.to(gameLobbyId).emit("lobbyHost",{lobbyHostId: gameLobbyId});
 		console.log("StartGame");
 	});
 
@@ -89,6 +104,12 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('chatMessage', (message) => {
+        messages.push({user:message.user, text: message.text});
+        console.log(message.user + " " + message.text);
+        io.emit('updateMessagesList', {messages: messages});
+    });
+
     socket.on('reset', function(resetData){
         let data = resetData.data;
         for(var i in Tank.list){
@@ -101,6 +122,11 @@ io.on('connection', (socket) => {
                 } while(checkIfGoodRespawn(p));
             }
         }
+    });
+
+    socket.on('saveScore', (data) => {
+        let playerScore = data.playerScore;
+        console.log("PlayersScore: " + playerScore + " " + socket.id);
     });
 
     socket.on('disconnect', () => {
@@ -117,13 +143,29 @@ var checkIfGoodRespawn = function(player){
 	return false;
 };
 
+var gameTimeCounter = function(gameLobbyId){
+    lobbies[gameLobbyId].lobbyGameTime = 500;
+    var gameTimer = setInterval(function() {
+        if (lobbies[gameLobbyId] == null || lobbies[gameLobbyId] == undefined ||
+        !lobbies[gameLobbyId].lobbyInGame || lobbies[gameLobbyId].lobbyGameTime <= 0) {
+            console.log("Leave gameTimer!");
+            clearInterval(gameTimer);
+            io.to(gameLobbyId).emit('gameOver', {});
+            return;
+        }
+        lobbies[gameLobbyId].lobbyGameTime--;
+        io.to(gameLobbyId).emit('gameTime', lobbies[gameLobbyId].lobbyGameTime);
+    }, 1000);
+};
+
 //25 frame per second
 setInterval(function(){
     for(let lobbyKey in lobbies){
         if(lobbies[lobbyKey].lobbyInGame){
+
             let pack = {
         		player:Tank.update(lobbyKey),
-        		bullet:Bullet.update(lobbyKey),
+        		bullet:Bullet.update(lobbyKey, Tank.list, socketHashMapList),
         	};
             let initPack = {player:Tank.getInitPackPlayerList(lobbyKey), bullet: Bullet.getInitPackBulletList(lobbyKey)};
             let removePack = {player:Tank.getRemovePackPlayerList(lobbyKey), bullet: Bullet.getRemovePackBulletList(lobbyKey)};

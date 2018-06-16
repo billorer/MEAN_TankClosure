@@ -1,29 +1,49 @@
-<h2 class="page-header whiteFont">Register</h2>
-<form (submit)="onRegisterSubmit()" class="whiteFont">
-    <div class="form-group">
-        <label>First Name</label>
-        <input type="text" [(ngModel)]="first_name" name="first_name" class="form-control">
-    </div>
-    <div class="form-group">
-        <label>Last Name</label>
-        <input type="text" [(ngModel)]="last_name" name="last_name" class="form-control">
-    </div>
-    <div class="form-group">
-        <label>Username</label>
-        <input type="text" [(ngModel)]="username" name="username" class="form-control">
-    </div>
-    <div class="form-group">
-        <label>Email</label>
-        <input type="text" [(ngModel)]="email" name="email" class="form-control" >
-    </div>
-    <div class="form-group">
-        <label>Password</label>
-        <input type="password" [(ngModel)]="password" name="password" class="form-control">
-    </div>
-    <input type="submit" class="btn btn-success" value="Register">
-</form>
-<ul class="list-group">
-    <li>
-        <button type="button" (click)="onBackClick()" class="list-group-item list-group-item-action">Back</button>
-    </li>
-</ul>
+<div class="menu">
+    <h2 class="page-header">Register</h2>
+    <form (submit)="onRegisterSubmit()" class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-sm-4">First Name</label>
+            <div class="col-sm-8">
+                <input type="text" [(ngModel)]="first_name" name="first_name" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-4">Last Name</label>
+            <div class="col-sm-8">
+                <input type="text" [(ngModel)]="last_name" name="last_name" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">Username</label>
+            <div class="col-sm-8">
+                <input type="text" [(ngModel)]="username" name="username" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">Email</label>
+            <div class="col-sm-8">
+                <input type="text" [(ngModel)]="email" name="email" class="form-control" >
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-4">Password</label>
+            <div class="col-sm-8">
+                <input type="password" [(ngModel)]="password" name="password" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-0 col-sm-12">
+                <input type="submit" class="btn btn-success" value="Register">
+            </div>
+        </div>
+    </form>
+    <ul class="formlink">
+        <li>
+            <a (click)="onBackClick()">Back</a>
+        </li>
+        <li>
+            <a (click)="onLoginClick()">Login</a>
+        </li>
+    </ul>
+</div>

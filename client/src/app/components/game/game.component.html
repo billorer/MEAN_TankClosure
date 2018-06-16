@@ -1,31 +1,30 @@
-<!-- <div *ngIf="selection" class="container">
-    <div class="menu">
-        <div class="row">
-            <div class="demo-3 col-md-4">
-                <div class="demo-3 col-md-4">
-
+<div class="gameDiv row">
+    <div class=col-lg-12>
+        <h5 class="whiteFont">GameTime: {{gameTime}} seconds</h5>
+        <h5 class="whiteFont">Score: {{tanksList[selfId]?.score}}</h5>
+        <h5 class="whiteFont">Bullets: {{tanksList[selfId]?.curBullet}}</h5>
+        <h5 class="whiteFont" *ngIf="tanksList[selfId]?.reloading">Reloading...</h5>
+    </div>
+</div>
+<div class="gameDiv row">
+    <div class=col-lg-9>
+        <canvas #mainCanvas width='1250' height='750'></canvas>
+    </div>
+    <div class=col-lg-3>
+        <div class="chatText">
+            <p *ngFor="let message of messages">
+                <b>{{ message.user }}</b>: {{ message.text }}
+            </p>
+        </div>
+        <form (submit)="sendMessage()" class="chatForm form-horizontal">
+            <div class="form-group">
+                <label class="whiteFont control-label col-sm-1">Message</label>
+                <div class="inputMsg col-sm-8">
+                    <input #message type="text" [(ngModel)]="messageText" name="messageText" class="form-control">
+                </div>
+                <div class="submitBTN col-sm-1">
+                    <input type="submit" class="btn" value="Send">
                 </div>
             </div>
-            <div class="demo-3 col-md-4">
-
-            </div>
-            <div class="demo-3 col-md-4">
-
-            </div>
-        </div>
-    </div>
-    <ul class="list-group">
-        <button type="button" (click)="play()" class="list-group-item list-group-item-action" >Play</button>
-        <button type="button" (click)="onBackClick()" class="list-group-item list-group-item-action">Back</button>
-    </ul>
-</div> -->
-<h2 class="whiteFont">{{gameTime | async}}</h2>
-<canvas #mainCanvas width='1250' height='750'></canvas>
-
-    <!-- <div class="col-lg-3">
-        <div id="chat-text">
-        </div>
-        <form id="chat-form">
-            <input id="chat-input" type='text'>
         </form>
-    </div> -->
+</div>

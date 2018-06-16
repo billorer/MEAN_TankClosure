@@ -6,6 +6,11 @@ const OptionSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    code: {
+        type: Number,
+        required: true,
+        default: 999
+    },
     forwardKey:{
         type: String,
         required: true,
@@ -62,6 +67,8 @@ const Option = module.exports = mongoose.model('Option', OptionSchema);
 
 module.exports.addOption = function(newOption, callback){
     const option = new Option({userId:newOption});
+    console.log("New option:");
+    console.log(option);
     option.save(callback);
 };
 
@@ -86,6 +93,7 @@ module.exports.updateOption = function(newOption, callback){
       option.leftCode = newOption.leftCode;
       option.rightCode = newOption.rightCode;
       option.attackCode = newOption.attackCode;
+      option.code = newOption.code;
       option.save(callback);
     });
 };

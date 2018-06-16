@@ -23,6 +23,10 @@ const UserSchema = mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    score: {
+        type: Number,
+        required: true
     }
 });
 
@@ -45,6 +49,11 @@ module.exports.addUser = function(newUser, callback){
             newUser.save(callback);
         });
     });
+};
+
+module.exports.updateUserScore = function(username, newUserScore, callback){
+    const query = {username: username};
+    User.update(query, { score: newUserScore }, callback);
 };
 
 module.exports.comparePassword = function(password, hash, callback){

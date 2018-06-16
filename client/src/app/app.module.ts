@@ -58,4 +58,6 @@ const appRoutes: Routes = [
   providers: [ValidateService, AuthService, AuthGuard, SocketioService, ImagesService],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+
+}

@@ -18,7 +18,7 @@ export class OptionsComponent implements OnInit {
       private authService: AuthService,
       private router: Router)
   {
-      this.option = new Option("","","","","","");
+      this.option = new Option("","","","","",0,"");
   }
 
   ngOnInit() {
@@ -32,6 +32,12 @@ export class OptionsComponent implements OnInit {
   }
 
   onOptionSubmit(){
+
+      if(this.option.code < 1 || this.option.code > 1000){
+          this.flashMessage.show('The code must be between 1 and 1000!', {cssClass: 'alert-danger', timeout: 3000});
+          return;
+      }
+
       const lOption = this.option;
       //Save option
       this.authService.saveOptions(lOption).subscribe(data => {

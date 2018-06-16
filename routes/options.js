@@ -19,6 +19,7 @@ router.put('/saveOptions', (req, res, next) => {
         leftCode: req.body.leftCode,
         rightCode: req.body.rightCode,
         attackCode: req.body.attackCode,
+        code: req.body.code,
         userId: req.body.userId
     });
     console.log("NewOption: " + newOption);
@@ -55,6 +56,7 @@ router.get('/getOption/:userId', passport.authenticate('jwt', {session:false}), 
                 leftCode: option.leftCode,
                 rightCode: option.rightCode,
                 attackCode:option.attackCode,
+                code:option.code,
                 userId: option.userId
             }
         });
