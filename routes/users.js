@@ -28,22 +28,28 @@ router.post('/register', (req, res, next) => {
             return res.json({success: false, msg: 'Username already exists!'});
         }
 
-        // The username does not exist, so we can create the new entity
-        User.addUser(newUser, (err, user) => {
-            if(err){
-                res.json({success: false, msg: 'Failed to register user: '+err});
-            }else {
-                // Adding default options to the new user as well
-                Option.addOption(user._id, (err, options) => {
-                    if(err){
-                        res.json({success: false, msg: 'Failed to save options to the new user: '+err});
-                    }else {
-                        // Sending emeail to the newly registered user
-                        emails.sendEmail(newUser);
-                        res.json({success: true, msg: 'User registered successfully and the registration email has been sent!'});
-                    }
-                });
+        User.getUserByEmail(newUser.email, (err, user) => {
+            if(err) throw err;
+            if(user){
+                return res.json({success: false, msg: 'Email already exists!'});
             }
+            // The username does not exist, so we can create the new entity
+            User.addUser(newUser, (err, user) => {
+                if(err){
+                    res.json({success: false, msg: 'Failed to register user: '+err});
+                }else {
+                    // Adding default options to the new user as well
+                    Option.addOption(user._id, (err, options) => {
+                        if(err){
+                            res.json({success: false, msg: 'Failed to save options to the new user: '+err});
+                        }else {
+                            // Sending emeail to the newly registered user
+                            emails.sendEmail(newUser);
+                            res.json({success: true, msg: 'User registered successfully and the registration email has been sent!'});
+                        }
+                    });
+                }
+            });
         });
     });
 });
@@ -93,6 +99,22 @@ router.post('/authenticate', (req, res, next) => {
     });
 });
 
+// Reset password
+router.put('/resetPassword', (req, res, next) => {
+    const email = req.body.email;
+    const password = req.body.password;
+
+    User.updatePassword(email, password, (err, returnData) => {
+        if(err) throw err;
+        if(returnData.n === 0 && returnData.nModified === 0){
+            return res.json({success: false, msg: 'User not found!'});
+        } else if (returnData.n === 1 && returnData.nModified === 1){
+            return res.json({success: true, msg: 'The password has been reset!'});
+        }
+    });
+});
+
+// Update score
 router.put('/updateScore', (req, res, next) => {
     const newUserScore = req.body.newUserScore;
     const username = req.body.username;

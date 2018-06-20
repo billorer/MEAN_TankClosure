@@ -176,6 +176,10 @@ export class MenuComponent implements OnInit {
 
     chosenTank(pImgNr){
         this.imgNr = pImgNr;
+        let tankBodyImage = this.imagesService.getImages().tankBodies[this.imgNr];
+        let options = this.authService.getOptionsFromLStorage();
+        console.log(this.player);
+        this.socketioService.emit('setImageData', {playerId: this.player.playerId, lobbyId: this.lobby.lobbyHostId, playerImgData: { imgNR: this.imgNr, width:tankBodyImage.width, height:tankBodyImage.height }, code: options.code });
     }
 
     startMatch() {

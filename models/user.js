@@ -41,6 +41,21 @@ module.exports.getUserByUsername = function(username, callback){
     User.findOne(query, callback);
 };
 
+module.exports.getUserByEmail = function(email, callback){
+    const query = {email: email};
+    User.findOne(query, callback);
+};
+
+module.exports.updatePassword = function(email, password, callback){
+    const query = {email: email};
+    bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(password, salt, (err, hash) => {
+            if(err) throw err;
+            User.update(query, { password: hash }, callback);
+        });
+    });
+};
+
 module.exports.addUser = function(newUser, callback){
     bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {

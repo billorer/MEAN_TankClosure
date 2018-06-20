@@ -24,6 +24,13 @@ export class AuthService {
       return this.http.post(environment.api_url+'/user/authenticate', user, {headers:headers}).map(res => res.json());
   }
 
+  resetPasUser(resPas){
+      let headers = new Headers();
+      headers.append('Content-Type','application/json');
+      console.log(resPas);
+      return this.http.put(environment.api_url+'/user/resetPassword', resPas, {headers:headers}).map(res => res.json());
+  }
+
   saveOptions(option){
       let headers = new Headers();
       headers.append('Content-Type','application/json');

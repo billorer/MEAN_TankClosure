@@ -12,10 +12,15 @@ export class LoginComponent implements OnInit {
     username: String;
     password: String;
 
+    email: String;
+    login: boolean;
+
     constructor(private authService: AuthService,
         private router: Router,
         private flashMessage: FlashMessagesService
-    ) { }
+    ) {
+        this.login = true;
+    }
 
     ngOnInit() {
     }
@@ -40,6 +45,31 @@ export class LoginComponent implements OnInit {
                 this.router.navigate(['/login']);
             }
         });
+    }
+
+    onResetPassSubmit(){
+        const resPas = {
+            email: this.email,
+            password: this.password
+        }
+        this.authService.resetPasUser(resPas).subscribe(data => {
+            if(data.success){
+                this.flashMessage.show(data.msg,
+                    {cssClass: 'alert-success',
+                    timeout: 5000});
+                this.login = true;
+                this.password = "";
+                this.email = "";
+            } else {
+                this.flashMessage.show(data.msg,
+                    {cssClass: 'alert-danger',
+                    timeout: 5000});
+            }
+        });
+    }
+
+    onNewPasswordClick() {
+        this.login = false;
     }
 
     onRegisterClick(){

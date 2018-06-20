@@ -36,7 +36,7 @@ io.on('connection', (socket) => {
                 case 3: tankX = 150; tankY = 550; break;
             }
             tankIndex++;
-            Tank.onConnect(socketHashMapList[playerKey], playerImgData, gameLobbyId, tankX, tankY);
+            Tank.onConnect(socketHashMapList[playerKey], socketHashMapList[playerKey].playerImgData, gameLobbyId, tankX, tankY);
         }
 
         io.to(gameLobbyId).emit('navigateToCanvas');

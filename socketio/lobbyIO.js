@@ -62,6 +62,16 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('setImageData', (data) => {
+        let playerId = data.playerId;
+        let code = data.code;
+        let playerImgData = data.playerImgData;
+        //this property is not in the model
+        socketHashMapList[playerId].playerImgData = playerImgData;
+        console.log(socketHashMapList[playerId].playerImgData.width);
+        socketHashMapList[playerId].code = code;
+    });
+
     socket.on('playerReady', (data) => {
         let hostId = data.hostId;
         // Check if the lobby exists
