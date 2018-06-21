@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng-serve",
+    "start": "ng serve",
     "build": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
@@ -30,7 +30,7 @@
     "ng4-date-countdown-timer": "^1.0.4",
     "rxjs": "^5.5.6",
     "socket.io": "^2.0.4",
-    "zone.js": "^0.8.19",
+    "zone.js": "^0.8.19"
   },
   "devDependencies": {
     "@angular/cli": "~1.7.3",
