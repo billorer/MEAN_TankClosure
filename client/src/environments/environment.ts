@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  api_url: 'http://localhost:3000',
+  api_url: '',
   imageFolderPath: '/assets/img/',
   gameFps: 1000/25, // 10 frame per second
   tankTowerRadius: 80,
