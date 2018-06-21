@@ -7,7 +7,7 @@ const config = require('../config/database');
 const Option = require('../models/option');
 
 //Save options
-router.put('/saveOptions', (req, res, next) => {
+router.put('/', (req, res, next) => {
     let newOption = new Option({
         forwardKey: req.body.forwardKey,
         backwardKey: req.body.backwardKey,
@@ -35,7 +35,7 @@ router.put('/saveOptions', (req, res, next) => {
 });
 
 // Options
-router.get('/getOption/:userId', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+router.get('/:userId', passport.authenticate('jwt', {session:false}), (req, res, next) => {
     const userId = req.params.userId;
     Option.getOptionByUserId(userId, (err, option) => {
         if(err) throw err;

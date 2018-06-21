@@ -46,23 +46,22 @@ export class MenuComponent implements OnInit {
         this.socketioService.emit('getLobbies',{});
         this.socketioService.removeEventListener('updateLobbiesList');
         this.socketioService.on('updateLobbiesList', (data) => {
-            console.log("UpdateLobbiesList: ");
+            //console.log("UpdateLobbiesList: ");
             this.updateLobbiesList(data.lobbies);
         });
         this.socketioService.on('updatePlayersList', (data) => {
-            console.log("UpdatePlayersList:");
+            //console.log("UpdatePlayersList:");
             this.updatePlayersList(data.playersList);
         });
         this.socketioService.removeEventListener('kickLobbyPlayer');
         this.socketioService.on('kickLobbyPlayer', (data) => {
-            console.log(data.msg);
             this.lobbyList = true;
             this.flashMessage.show(data.msg, {cssClass: 'alert-danger', timeout: 3000});
         });
         this.socketioService.on('navigateToCanvas', (data) => {
             this.lobby.lobbyInGame = true;
             this.router.navigate(['/game']);
-            console.log("The match has been started!");
+            //console.log("The match has been started!");
         });
         this.initializeMenuListeners();
     }
@@ -85,7 +84,7 @@ export class MenuComponent implements OnInit {
         this.socketioService.removeEventListener('joinSuccess');
         this.socketioService.removeEventListener('joinUnSuccess');
         this.socketioService.on('joinSuccess', (data) => {
-            console.log("Player joined successfully:");
+            //console.log("Player joined successfully:");
             this.lobbyList = false;
             this.flashMessage.show('You joined the lobby!', {cssClass: 'alert-success', timeout: 3000});
         });
@@ -102,7 +101,7 @@ export class MenuComponent implements OnInit {
             // Send the new lobby and close the modal
             this.socketioService.emit('createLobby', {lobby: this.lobby, newPlayer: this.player});
             this.flashMessage.show('The lobby has been created!', {cssClass: 'alert-success', timeout: 3000});
-
+            this.chosenTank(this.imgNr);
             //this.lobby = new Lobby("","",1,2,"",1,false);
         } else {
             this.flashMessage.show('All of the required fields must be filled!', {cssClass: 'alert-danger', timeout: 3000});
@@ -114,9 +113,9 @@ export class MenuComponent implements OnInit {
         for (let lobby in lobbiesList){
             if(lobbiesList.hasOwnProperty(lobby) && !lobbiesList[lobby].lobbyInGame){
                 this.lobbies.push(lobbiesList[lobby]);
-                console.log("LobbyId: "+lobbiesList[lobby].lobbyHostId + " CurPlayers: " + lobbiesList[lobby].lobbyCurPlayer);
+                //console.log("LobbyId: "+lobbiesList[lobby].lobbyHostId + " CurPlayers: " + lobbiesList[lobby].lobbyCurPlayer);
             } else{
-                console.log("InGameLobby: "+lobbiesList[lobby].lobbyHostId + " CurPlayers: " + lobbiesList[lobby].lobbyCurPlayer);
+                //console.log("InGameLobby: "+lobbiesList[lobby].lobbyHostId + " CurPlayers: " + lobbiesList[lobby].lobbyCurPlayer);
             }
         }
     }
@@ -126,7 +125,7 @@ export class MenuComponent implements OnInit {
         for (let curPlayer in playersList){
             if(playersList.hasOwnProperty(curPlayer)){
                 this.players.push(playersList[curPlayer]);
-                console.log("PlayerId: "+playersList[curPlayer].playerId);
+                //console.log("PlayerId: "+playersList[curPlayer].playerId);
             }
         }
     }
@@ -137,7 +136,7 @@ export class MenuComponent implements OnInit {
         }
         else{
             this.lobbyPass = "";
-            console.log("Player faild to join: bad password!");
+            //console.log("Player faild to join: bad password!");
             this.flashMessage.show('The lobby password is incorrect!', {cssClass: 'alert-danger', timeout: 3000});
         }
         this.lobbies[index].showPassForm = false;
@@ -154,6 +153,7 @@ export class MenuComponent implements OnInit {
     joinLobby(pHostId){
         this.player = new Player(pHostId, this.socketioService.getId(), this.authService.getUserNameFromLStorage(), false);
         this.socketioService.emit('joinLobby', {newPlayer: this.player});
+        this.chosenTank(this.imgNr);
     }
 
     onPlayerReadyClick(playerId, hostId, playerStatus){
@@ -169,7 +169,7 @@ export class MenuComponent implements OnInit {
     }
 
     onLeaveClick(playerId, hostId){
-        console.log("Leave lobby: " + playerId + " " + hostId);
+        //console.log("Leave lobby: " + playerId + " " + hostId);
         this.socketioService.emit('leaveLobby',{hostId: hostId, playerId: playerId});
         this.lobbyList = true;
     }
@@ -178,8 +178,7 @@ export class MenuComponent implements OnInit {
         this.imgNr = pImgNr;
         let tankBodyImage = this.imagesService.getImages().tankBodies[this.imgNr];
         let options = this.authService.getOptionsFromLStorage();
-        console.log(this.player);
-        this.socketioService.emit('setImageData', {playerId: this.player.playerId, lobbyId: this.lobby.lobbyHostId, playerImgData: { imgNR: this.imgNr, width:tankBodyImage.width, height:tankBodyImage.height }, code: options.code });
+        this.socketioService.emit('setImageData', {playerId: this.player.playerId, playerImgData: { imgNR: this.imgNr, width:tankBodyImage.width, height:tankBodyImage.height }, code: options.code });
     }
 
     startMatch() {

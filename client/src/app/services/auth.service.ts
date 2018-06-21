@@ -15,32 +15,32 @@ export class AuthService {
   registerUser(user){
       let headers = new Headers();
       headers.append('Content-Type','application/json');
-      return this.http.post(environment.api_url+'/user/register', user, {headers:headers}).map(res => res.json());
+      return this.http.post(environment.api_url+'/user/', user, {headers:headers}).map(res => res.json());
   }
 
   authenticateUser(user){
       let headers = new Headers();
       headers.append('Content-Type','application/json');
-      return this.http.post(environment.api_url+'/user/authenticate', user, {headers:headers}).map(res => res.json());
+      return this.http.post(environment.api_url+'/user/authentication', user, {headers:headers}).map(res => res.json());
   }
 
   resetPasUser(resPas){
       let headers = new Headers();
       headers.append('Content-Type','application/json');
       console.log(resPas);
-      return this.http.put(environment.api_url+'/user/resetPassword', resPas, {headers:headers}).map(res => res.json());
+      return this.http.put(environment.api_url+'/user/password', resPas, {headers:headers}).map(res => res.json());
   }
 
   saveOptions(option){
       let headers = new Headers();
       headers.append('Content-Type','application/json');
-      return this.http.put(environment.api_url+'/option/saveOptions', option, {headers:headers}).map(res => res.json());
+      return this.http.put(environment.api_url+'/option/', option, {headers:headers}).map(res => res.json());
   }
 
   updateUserScore(userData){
       let headers = new Headers();
       headers.append('Content-Type','application/json');
-      return this.http.put(environment.api_url+'/user/updateScore', userData, {headers:headers}).map(res => res.json());
+      return this.http.put(environment.api_url+'/user/score', userData, {headers:headers}).map(res => res.json());
   }
 
   getOption(userId){
@@ -48,7 +48,7 @@ export class AuthService {
       this.loadToken();
       headers.append('Authorization', this.authToken);
       headers.append('Content-Type','application/json');
-      return this.http.get(environment.api_url+'/option/getOption/'+userId, {headers:headers}).map(res => res.json());
+      return this.http.get(environment.api_url+'/option/'+userId, {headers:headers}).map(res => res.json());
   }
 
   getProfile(){

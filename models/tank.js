@@ -217,6 +217,7 @@ Tank.onConnect = function(socket, playerImgData, gameLobbyId, tankX, tankY){
 };
 
 Tank.playerImgData = function(player, data) {
+	console.log(data);
 	player.imgWidth = data.width;
 	player.imgHeight = data.height;
 	player.imgNR = data.imgNR;

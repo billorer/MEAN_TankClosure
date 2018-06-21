@@ -66,9 +66,12 @@ io.on('connection', (socket) => {
         let playerId = data.playerId;
         let code = data.code;
         let playerImgData = data.playerImgData;
-        //this property is not in the model
+        console.log("SetIMGDATA!");
+        console.log(playerId);
+        //console.log(socketHashMapList[playerId]);
+
         socketHashMapList[playerId].playerImgData = playerImgData;
-        console.log(socketHashMapList[playerId].playerImgData.width);
+        console.log(socketHashMapList[playerId].playerImgData);
         socketHashMapList[playerId].code = code;
     });
 

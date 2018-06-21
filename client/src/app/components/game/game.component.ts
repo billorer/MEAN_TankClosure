@@ -147,7 +147,7 @@ export class GameComponent implements OnInit {
 
         this.socketioService.removeEventListener('kickLobbyPlayer');
         this.socketioService.on('kickLobbyPlayer', (data) => {
-            console.log(data.msg);
+            //console.log(data.msg);
             this.flashMessage.show(data.msg, {cssClass: 'alert-danger', timeout: 3000});
             this.router.navigate(['/menu']);
         });
@@ -234,7 +234,7 @@ export class GameComponent implements OnInit {
             this.socketioService.emit('reset', {data: data});
         });
         this.socketioService.on('gameOver', (data) => {
-            console.log("GAME OVER");
+            //console.log("GAME OVER");
             //leave the gameloop
             this.gameLoop.unsubscribe();
             //let newScore = this.tanksList[this.selfId].score + this.authService.getUserScoreFromLStorage();
@@ -277,7 +277,7 @@ export class GameComponent implements OnInit {
 
     sendMessage(){
         let userName = this.authService.getUserNameFromLStorage();
-        console.log("Message: " + this.messageText);
+        //console.log("Message: " + this.messageText);
         this.socketioService.emit('chatMessage', {user:userName, text:this.messageText});
         this.messageText = "";
     }

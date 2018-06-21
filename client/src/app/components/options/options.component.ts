@@ -26,7 +26,7 @@ export class OptionsComponent implements OnInit {
           this.option = option.options;
       },
       err => {
-          console.log("Error: " + err);
+         // console.log("Error: " + err);
           return false;
       });
   }
@@ -56,7 +56,7 @@ export class OptionsComponent implements OnInit {
       let keyCodeNR = event.which || event.keyCode;
       //We convert the keyCode from lower to Upper case, thats why we use minus 32
       this.option[inputID] = keyCodeNR - 32;
-      console.log("Code: " + this.option[inputID]);
+      //console.log("Code: " + this.option[inputID]);
   };
 
   onBackClick(){

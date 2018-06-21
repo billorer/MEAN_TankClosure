@@ -26,7 +26,7 @@ io.on('connection', (socket) => {
         for(let playerKey in lobbies[gameLobbyId].lobbyPlayers){
             socketHashMapList[playerKey].join(gameLobbyId);
             socketHashMapList[playerKey].mobile = false;
-            socketHashMapList[playerKey].code = mobileCode;
+            //socketHashMapList[playerKey].code = mobileCode;
 
             let tankX, tankY = 0;
             switch(tankIndex){
@@ -144,7 +144,7 @@ var checkIfGoodRespawn = function(player){
 };
 
 var gameTimeCounter = function(gameLobbyId){
-    lobbies[gameLobbyId].lobbyGameTime = 500;
+    lobbies[gameLobbyId].lobbyGameTime = 20;
     var gameTimer = setInterval(function() {
         if (lobbies[gameLobbyId] == null || lobbies[gameLobbyId] == undefined ||
         !lobbies[gameLobbyId].lobbyInGame || lobbies[gameLobbyId].lobbyGameTime <= 0) {

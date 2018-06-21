@@ -11,7 +11,7 @@ const User = require('../models/user');
 const Option = require('../models/option');
 
 // Register
-router.post('/register', (req, res, next) => {
+router.post('/', (req, res, next) => {
     let newUser = new User({
         first_name: req.body.first_name,
         last_name: req.body.last_name,
@@ -55,7 +55,7 @@ router.post('/register', (req, res, next) => {
 });
 
 // Authenticate
-router.post('/authenticate', (req, res, next) => {
+router.post('/authentication', (req, res, next) => {
     const username = req.body.username;
     const password = req.body.password;
 
@@ -100,7 +100,7 @@ router.post('/authenticate', (req, res, next) => {
 });
 
 // Reset password
-router.put('/resetPassword', (req, res, next) => {
+router.put('/password', (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
 
@@ -115,7 +115,7 @@ router.put('/resetPassword', (req, res, next) => {
 });
 
 // Update score
-router.put('/updateScore', (req, res, next) => {
+router.put('/score', (req, res, next) => {
     const newUserScore = req.body.newUserScore;
     const username = req.body.username;
     console.log("UpdateScore: " + newUserScore + " " + username);
