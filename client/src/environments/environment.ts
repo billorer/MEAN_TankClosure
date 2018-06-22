@@ -5,11 +5,10 @@
 
 export const environment = {
   production: false,
-  api_url: '',
+  api_url: 'http://localhost:3000',
   imageFolderPath: '/assets/img/',
   gameFps: 1000/25, // 10 frame per second
   tankTowerRadius: 80,
   tankCircleRadius: 45
 
 };
-//http://localhost:3000
