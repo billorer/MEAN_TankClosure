@@ -95,7 +95,15 @@ io.on('connection', (socket) => {
                         curPlayer.pressingAttack = stateValue;
                         break;
                     case "mouseAngle":
+                        curPlayer.mouseAngle = parseFloat(data.angle);
+                        let cx = curPlayer.x + curPlayer.imgWidth / 2;
+                        let cy = curPlayer.y + curPlayer.imgHeight / 2;
+                        let x = cx + 80 * Math.cos(curPlayer.mouseAngle),
+                            y = cy + 80 * Math.sin(curPlayer.mouseAngle);
+                            //console.log(angle);
                         curPlayer.mouseAngle = parseFloat(data.state);
+                        curPlayer.xPivot = x;
+                        curPlayer.yPivot = y;
                         break;
                     default:
                         break;
@@ -144,7 +152,7 @@ var checkIfGoodRespawn = function(player){
 };
 
 var gameTimeCounter = function(gameLobbyId){
-    lobbies[gameLobbyId].lobbyGameTime = 20;
+    lobbies[gameLobbyId].lobbyGameTime = 40;
     var gameTimer = setInterval(function() {
         if (lobbies[gameLobbyId] == null || lobbies[gameLobbyId] == undefined ||
         !lobbies[gameLobbyId].lobbyInGame || lobbies[gameLobbyId].lobbyGameTime <= 0) {

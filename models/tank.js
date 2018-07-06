@@ -211,6 +211,7 @@ Tank.onConnect = function(socket, playerImgData, gameLobbyId, tankX, tankY){
 			player.mouseAngle = data.state;
 			player.xPivot = data.x;
 			player.yPivot = data.y;
+			console.log(data);
 		}
 	});
 	Tank.playerImgData(player, playerImgData);

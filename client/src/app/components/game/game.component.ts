@@ -351,7 +351,7 @@ export class GameComponent implements OnInit {
           // get new point
           let x = cx + environment.tankTowerRadius * Math.cos(angle),
               y = cy + environment.tankTowerRadius * Math.sin(angle);
-
+              
           this.socketioService.emit('keyPress', {inputId:'mouseAngle', state:angle / Math.PI * 180, x:x, y:y});
 
           attack && this.socketioService.emit('keyPress', {inputId:'attack', state:true});
